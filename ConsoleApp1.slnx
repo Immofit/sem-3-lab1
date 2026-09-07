@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Logic/Logic.csproj" />
+  <Project Path="Model/Model.csproj" />
+  <Project Path="Presentation.Console/Presentation.Console.csproj" />
+  <Project Path="Presentation.WinForms/Presentation.WinForms.csproj" />
+</Solution>

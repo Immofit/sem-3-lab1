@@ -32,12 +32,12 @@ namespace Model
             return false;
         }
         //Все машины
-        public List<Car> GetAllCars()
+        public List<Car> AllCars()
         {
             return cars;
         }
         //По айди
-        public Car GetCarById(int id)
+        public Car CarId(int id)
         {
             return cars.Find(c => c.Id == id);
         }
@@ -56,7 +56,7 @@ namespace Model
             return false;
         }
         //Групировка машин по бренду
-        public Dictionary<string, List<Car>> GetCarsByBrand()
+        public Dictionary<string, List<Car>> CarsBrand()
         {
             var carsByBrand = new Dictionary<string, List<Car>>();
             foreach (var car in cars)
@@ -70,13 +70,13 @@ namespace Model
             return carsByBrand;
         }
         //Групировка машин по году
-        public List<Car> FindCarsAfterYear(int year)
+        public List<Car> CarsYear(int year)
         {
             List<Car> result = new List<Car>();
 
             for (int i = 0; i < cars.Count; i++)
             {
-                if (cars[i].Year > year)
+                if (cars[i].Year == year)
                 {
                     result.Add(cars[i]);
                 }

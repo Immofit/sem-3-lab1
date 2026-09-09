@@ -11,15 +11,20 @@ namespace Presentation.WinForms
 {
     public partial class AddCarForm : Form
     {
-        public Car CreatedCar { get; private set; }
-
-
+        /// <summary>
+        /// Инициализирует новый экземпляр формы добавления/изменения машины.
+        /// </summary>
         public AddCarForm()
         {
             InitializeComponent();
         }
 
-
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Применить": проверяет заполненность полей
+        /// и, если данные валидны, закрывает форму с результатом DialogResult.OK.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void AddButton_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(brandBox.Text) ||
@@ -42,6 +47,10 @@ namespace Presentation.WinForms
             Close();
         }
 
+        /// <summary>
+        /// Возвращает значения, введённые пользователем в полях формы.
+        /// </summary>
+        /// <returns>Кортеж с брендом, моделью, цветом и годом машины.</returns>
         public (string brand, string model, string color, int year) GetValues()
         {
             return (brandBox.Text, modelBox.Text, colorBox.Text, (int)yearBox.Value);

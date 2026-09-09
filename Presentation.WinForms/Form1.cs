@@ -11,6 +11,12 @@ namespace Presentation.WinForms
         Logic logic = new Logic();
         private BindingList<Car> carsBinding;
         private bool secretMode = false;
+
+
+
+        /// <summary>
+        /// Инициализирует форму и заполняет её тестовыми данными о машинах.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
@@ -25,7 +31,11 @@ namespace Presentation.WinForms
             logic.CreateCar("Haval", "Dargo X", "Чёрный", 2024);
         }
 
-
+        /// <summary>
+        /// Сортирует список машин по бренду при клике на заголовок соответствующего столбца.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные о столбце, по которому кликнули.</param>
         private void Table_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.ColumnIndex == 1)
@@ -38,7 +48,9 @@ namespace Presentation.WinForms
         }
 
 
-
+        /// <summary>
+        /// Обновляет таблицу, заново получая полный список машин из Logic.
+        /// </summary>
         private void RefreshTable()
         {
             carsBinding = new BindingList<Car>(logic.AllCars());
@@ -47,12 +59,24 @@ namespace Presentation.WinForms
 
 
 
-
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Получить все машины" — обновляет таблицу.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void GetCars_Click(object sender, EventArgs e)
         {
             RefreshTable();
         }
 
+
+
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Создать машину" — открывает форму ввода данных
+        /// и, если пользователь подтвердил ввод, создаёт новую машину через Logic.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void CreateCar_Click(object sender, EventArgs e)
         {
             using (var addForm = new AddCarForm())
@@ -68,6 +92,13 @@ namespace Presentation.WinForms
         }
 
 
+
+
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Удалить машину" — удаляет выбранную в таблице машину.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void DeleteCar_Click(object sender, EventArgs e)
         {
             if (Table.CurrentRow?.DataBoundItem is not Car selectedCar)
@@ -81,6 +112,15 @@ namespace Presentation.WinForms
             Table.DataSource = logic.AllCars();
         }
 
+
+
+
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Изменить машину" — открывает форму редактирования
+        /// для выбранной в таблице машины и применяет изменения через Logic.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void UpdateCar_Click(object sender, EventArgs e)
         {
             if (Table.CurrentRow?.DataBoundItem is not Car selectedCar)
@@ -101,6 +141,15 @@ namespace Presentation.WinForms
             }
         }
 
+
+
+
+        /// <summary>
+        /// Обрабатывает нажатие кнопки поиска машин по году — запрашивает год у пользователя
+        /// и отображает только машины этого года выпуска.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void CarAge_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Введите год:", "Поиск машин", "");
@@ -123,13 +172,25 @@ namespace Presentation.WinForms
             Table.DataSource = carsBinding;
         }
 
+
+
+        /// <summary>
+        /// Обрабатывает нажатие кнопки поиска машин по цвету — запрашивает цвет у пользователя
+        /// и отображает только машины этого цвета.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void ColorCar_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Введите цвет:", "Поиск машин", "");
 
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                MessageBox.Show("Цвет не может быть пустым.");
+                return;
+            }
 
             List<Car> result = logic.CarsColor(input);
-
             if (result.Count == 0)
             {
                 MessageBox.Show("Машин цвета " + input + " не найдено.");
@@ -140,6 +201,16 @@ namespace Presentation.WinForms
             Table.DataSource = carsBinding;
         }
 
+
+
+
+
+        /// <summary>
+        /// Переключает видимость секретных функций (тонировка, скрутка пробега)
+        /// и меняет визуальное оформление формы в зависимости от режима.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void Secret_Click(object sender, EventArgs e)
         {
             secretMode = !secretMode;

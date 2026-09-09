@@ -28,6 +28,13 @@ namespace Presentation.WinForms
         }
 
 
+        private void RefreshTable()
+        {
+            carsBinding = new BindingList<Car>(logic.AllCars());
+            Table.DataSource = carsBinding;
+        }
+
+
         private void GetCars_Click(object sender, EventArgs e)
         {
             RefreshTable();

@@ -4,15 +4,15 @@ namespace Model
 {
     public class Car
     {
-        public int Id;
-        public string Brand;   
-        public string Model;   
-        public string Color;   
-        public int Year;     
-        public int Mileage;
-        public bool WindowTinting;
+        public int Id { get; set; }
+        public string Brand { get; set; }
+        public string Model { get; set; }
+        public string Color { get; set; }
+        public int Year { get; set; }
+        public int Mileage { get; set; }
+        public bool WindowTinting { get; set; } = false;
 
-        public Car(int id, string brand, string model, string color, int year, int mileage, bool windowTinting  )
+        public Car(int id, string brand, string model, string color, int year, int mileage  )
         {
             Id = id;
             Brand = brand;
@@ -20,11 +20,11 @@ namespace Model
             Color = color;
             Year = year;
             Mileage = mileage;
-            WindowTinting = windowTinting;
+            
         }
         public override string ToString()
         {
-            return "Id=" + Id + " | " + Brand + " " + Model + " | Цвет: " + Color + " | " + Year + " год | Пробег: " + Mileage + " км | Остекление: " + WindowTinting;
+            return "Id=" + Id + " | " + Brand + " " + Model + " | Цвет: " + Color + " | " + Year + " год | Пробег: " + Mileage + " км | Тонировка: " + WindowTinting;
         }
     }
 }

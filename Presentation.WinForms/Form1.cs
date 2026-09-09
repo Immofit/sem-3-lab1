@@ -28,11 +28,6 @@ namespace Presentation.WinForms
         }
 
 
-        private void RefreshTable()
-        {
-            carsBinding = new BindingList<Car>(logic.AllCars());
-            Table.DataSource = carsBinding;
-        }
 
 
         private void GetCars_Click(object sender, EventArgs e)
@@ -47,7 +42,7 @@ namespace Presentation.WinForms
                 if (addForm.ShowDialog(this) == DialogResult.OK)
                 {
                     var values = addForm.GetValues();
-                    logic.CreateCar(values.brand, values.model, values.color, values.year, values.mileage);
+                    logic.CreateCar(values.brand, values.model, values.color, values.year);
                     RefreshTable();
                 }
             }

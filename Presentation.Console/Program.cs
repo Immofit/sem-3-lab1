@@ -1,171 +1,359 @@
 ﻿using System;
 using Model;
+
 namespace ConsoleApp
 {
     class Program
     {
+        // Создаём один объект Logic на всё приложение — через него работаем со всеми машинами
         static Logic logic = new Logic();
+
+        /// <summary>
+        /// Точка входа в программу. Показывает меню и обрабатывает выбор пользователя в цикле.
+        /// </summary>
         static void Main(string[] args)
         {
             bool exit = false;
+
             while (!exit)
             {
                 Menu();
                 Console.Write($"Введите ваш выбор: ");
-                string choice = Console.ReadLine();
+                string choice = Console.ReadLine() ?? "";
+
+                switch (choice)
                 {
-                    switch (choice)
-                    {
-                        case "1":
-                            AddCar();
-                            break;
-                        case "2":
-                            DeleteCar();
-                            break;
-                        case "3":
-                            AllCars();
-                            break;
-                        case "4":
-                            UpdateCar();
-                            break;
-                        case "5":
-                            GroupBrand();
-                            break;
-                        case "6":
-                            CarsYear();
-                            break;
-                        case "0":
-                            exit = true;
-                            break;
-                        default:
-                            Console.Clear();
-                            Console.WriteLine("Неверный выбор. Попробуйте снова.");
-                            break;
-                    }
-                }
-                static void Menu()//Меню
-                {
-                    Console.WriteLine("---- МЕНЮ ----");
-                    Console.WriteLine("1 - Создать машину");
-                    Console.WriteLine("2 - Удалить машину");
-                    Console.WriteLine("3 - Показать все машины");
-                    Console.WriteLine("4 - Изменить машину");
-                    Console.WriteLine("5 - Группировка машин по марке");
-                    Console.WriteLine("6 - Показать машины определенного года");
-                    Console.WriteLine("7 - Показать машины по цвету");
-                    
-                    Console.WriteLine("0 - Выход");
-                    Console.Write("Ваш выбор: ");
-                }
-
-                static void AddCar()//Добавить Машину
-                {
-                    Console.Clear();
-                    Console.Write("Введите марку машины: ");
-                    string brand = Console.ReadLine();
-                    Console.Write("Введите модель машины: ");
-                    string model = Console.ReadLine();
-                    Console.Write("Введите цвет машины: ");
-                    string color = Console.ReadLine();
-                    Console.Write("Введите год выпуска машины: ");
-                    int year = int.Parse(Console.ReadLine());
-                    Console.Write("Введите пробег машины: ");
-                    int mileage = int.Parse(Console.ReadLine());
-                   
-                    var car = logic.CreateCar(brand, model, color, year, mileage);
-                    Console.WriteLine("Машина создана: " + car);
-                }
-
-                static void DeleteCar()//Удалить Машину
-                {
-                    Console.Clear();
-                    Console.Write("Введите ID машины для удаления: ");
-                    int id = int.Parse(Console.ReadLine());
-                    bool deleted = logic.DeleteCar(id);
-                    if (deleted)
-                    {
-                        Console.WriteLine("Машина с ID " + id + " удалена.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Машина с ID " + id + " не найдена.");
-                    }
-                }
-
-                static void AllCars()//Все машины
-                {
-                    Console.Clear();
-                    var cars = logic.AllCars();
-                    Console.WriteLine("Все машины:");
-                    foreach (var car in cars)
-                    {
-                        Console.WriteLine(car);
-                    }
-                }
-
-                static void UpdateCar()//Изменить машину
-                {
-                    Console.Clear();
-                    Console.Write("Введите ID машины для изменения: ");
-                    int id = int.Parse(Console.ReadLine());
-                    var car = logic.CarId(id);
-                    if (car == null)
-                    {
-                        Console.WriteLine("Машина с ID " + id + " не найдена.");
-                        return;
-                    }
-                    Console.Write("Введите новую марку машины: ");
-                    string brand = Console.ReadLine();
-                    Console.Write("Введите новую модель машины: ");
-                    string model = Console.ReadLine();
-                    Console.Write("Введите новый цвет машины: ");
-                    string color = Console.ReadLine();
-                    Console.Write("Введите новый год выпуска машины: ");
-                    int year = int.Parse(Console.ReadLine());
-                    bool updated = logic.UpdateCar(id, brand, model, color, year);
-                    if (updated)
-                    {
-                        Console.WriteLine("Машина с ID " + id + " обновлена.");
-                    }
-                    
-                }
-
-                static void GroupBrand()//Группировка машин по бренду
-                {
-                    Console.Clear();
-                    var carsByBrand = logic.CarsBrand();
-                    Console.WriteLine("Группировка машин по бренду:");
-                    foreach (var brand in carsByBrand.Keys)
-                    {
-                        Console.WriteLine("Бренд: " + brand);
-                        foreach (var car in carsByBrand[brand])
-                        {
-                            Console.WriteLine(car);
-                        }
-                    }
-                }
-
-                static void CarsYear()//Показать машины определенного года
-                {
-                    Console.Clear();
-                    Console.Write("Введите год: ");
-                    int year = int.Parse(Console.ReadLine());
-
-                    var cars = logic.CarsYear(year);
-
-                    if (cars.Count == 0)
-                    {
-                        Console.WriteLine("Машин с таким годом не найдено");
-                        return;
-                    }
-
-                    Console.WriteLine("Машины " + year + " года:");
-                    foreach (var car in cars)
-                    {
-                        Console.WriteLine(car);
-                    }
+                    case "1":
+                        AddCar();
+                        break;
+                    case "2":
+                        DeleteCar();
+                        break;
+                    case "3":
+                        AllCars();
+                        break;
+                    case "4":
+                        UpdateCar();
+                        break;
+                    case "5":
+                        GroupBrand();
+                        break;
+                    case "6":
+                        CarsYear();
+                        break;
+                    case "7":
+                        CarsColor();
+                        break;
+                    case "8":
+                        SecretFunctions();
+                        break;
+                    case "0":
+                        exit = true;
+                        break;
+                    default:
+                        Console.Clear();
+                        Console.WriteLine("Неверный выбор. Попробуйте снова.");
+                        break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Запрашивает у пользователя целое число и повторяет запрос, пока ввод некорректный.
+        /// </summary>
+        static int ReadInt(string prompt)
+        {
+            int result;
+            Console.Write(prompt);
+            while (!int.TryParse(Console.ReadLine(), out result))
+            {
+                Console.WriteLine("Некорректное число, попробуйте снова.");
+                Console.Write(prompt);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Выводит на экран текст главного меню с доступными действиями.
+        /// </summary>
+        static void Menu()
+        {
+            Console.Clear();
+            Console.WriteLine("---- МЕНЮ ----");
+            Console.WriteLine("1 - Создать машину");
+            Console.WriteLine("2 - Удалить машину");
+            Console.WriteLine("3 - Показать все машины");
+            Console.WriteLine("4 - Изменить машину");
+            Console.WriteLine("5 - Группировка машин по марке");
+            Console.WriteLine("6 - Показать машины определенного года");
+            Console.WriteLine("7 - Показать машины по цвету");
+            Console.WriteLine("8 - Секретные функции");
+            Console.WriteLine("0 - Выход");
+        }
+
+        /// <summary>
+        /// Запрашивает у пользователя данные новой машины и создаёт её через Logic.
+        /// </summary>
+        static void AddCar()
+        {
+            Console.Clear();
+            Console.Write("Введите марку машины: ");
+            string brand = Console.ReadLine() ?? "";
+            Console.Write("Введите модель машины: ");
+            string model = Console.ReadLine() ?? "";
+            Console.Write("Введите цвет машины: ");
+            string color = Console.ReadLine() ?? "";
+            int year = ReadInt("Введите год выпуска машины: ");
+
+            // Пробег генерируется случайно внутри CreateCar
+            var car = logic.CreateCar(brand, model, color, year);
+            Console.WriteLine($"Машина создана: {car}");
+            Console.WriteLine("Нажмите любую клавишу для продолжения ");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Запрашивает ID машины у пользователя и удаляет её, если она найдена.
+        /// </summary>
+        static void DeleteCar()
+        {
+            Console.Clear();
+            int id = ReadInt("Введите ID машины для удаления: ");
+            bool deleted = logic.DeleteCar(id);
+
+            if (deleted)
+                Console.WriteLine($"Машина с ID {id} удалена.");
+            else
+                Console.WriteLine($"Машина с ID {id} не найдена.");
+            Console.WriteLine("Нажмите любую клавишу для продолжения ");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Выводит на экран список всех машин.
+        /// </summary>
+        static void AllCars()
+        {
+            Console.Clear();
+            var cars = logic.AllCars();
+            
+            if (cars.Count==0)
+            {
+                Console.WriteLine("Список машин пуст.");
+            }
+            else
+            { 
+                Console.WriteLine("Все машины:");
+                foreach (var car in cars)
+                {
+                    Console.WriteLine(car);
+                }
+            }
+            Console.WriteLine("Нажмите любую клавишу для продолжения ");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Запрашивает ID машины и новые данные, обновляет машину, если она найдена.
+        /// </summary>
+        static void UpdateCar()
+        {
+            Console.Clear();
+
+            int id = ReadInt("Введите ID машины для изменения: ");
+            var car = logic.CarId(id);
+
+            if (car == null)
+            {
+                Console.WriteLine($"Машина с ID {id} не найдена.");
+                Console.WriteLine("Нажмите любую клавишу для продолжения ");
+                Console.ReadKey();
+                return;
+            }
+
+            Console.Write("Введите новую марку машины: ");
+            string brand = Console.ReadLine() ?? "";
+            Console.Write("Введите новую модель машины: ");
+            string model = Console.ReadLine() ?? "";
+            Console.Write("Введите новый цвет машины: ");
+            string color = Console.ReadLine() ?? "";
+            int year = ReadInt("Введите новый год выпуска машины: ");
+
+            bool updated = logic.UpdateCar(id, brand, model, color, year);
+            if (updated)
+            {
+                Console.WriteLine($"Машина с ID {id} обновлена.");
+            }
+            Console.WriteLine("Нажмите любую клавишу для продолжения ");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Выводит машины, сгруппированные по бренду (марке).
+        /// </summary>
+        static void GroupBrand()
+        {
+            Console.Clear();
+            var carsByBrand = logic.CarsBrand();
+            Console.WriteLine("Группировка машин по бренду:");
+
+            foreach (var brand in carsByBrand.Keys)
+            {
+                Console.WriteLine($"Бренд: {brand}");
+                foreach (var car in carsByBrand[brand])
+                {
+                    Console.WriteLine(car);
+                }
+            }
+            Console.WriteLine("Нажмите любую клавишу для продолжения ");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Запрашивает год у пользователя и выводит машины этого года выпуска.
+        /// </summary>
+        static void CarsYear()
+        {
+            Console.Clear();
+            AllCars();
+            int year = ReadInt("Введите год: ");
+
+            var cars = logic.CarsYear(year);
+
+            if (cars.Count == 0)
+            {
+                Console.WriteLine($"Машин {year} года не найдено");
+                Console.WriteLine("Нажмите любую клавишу для продолжения ");
+                Console.ReadKey();
+                return;
+            }
+
+            Console.WriteLine($"Машины {year} года:");
+            foreach (var car in cars)
+            {
+                Console.WriteLine(car);
+            }
+            Console.WriteLine("Нажмите любую клавишу для продолжения ");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Запрашивает цвет у пользователя и выводит машины этого цвета.
+        /// </summary>
+        static void CarsColor()
+        {
+            Console.Clear();
+            Console.Write("Введите цвет: ");
+            string color = Console.ReadLine() ?? "";
+            var cars = logic.CarsColor(color);
+
+            if (cars.Count == 0)
+            {
+                Console.WriteLine("Машин с таким цветом не найдено");
+                Console.WriteLine("Нажмите любую клавишу для продолжения ");
+                Console.ReadKey();
+                return;
+            }
+
+            Console.WriteLine($"Машины цвета   {color} :");
+            foreach (var car in cars)
+            {
+                Console.WriteLine(car);
+            }
+            Console.WriteLine("Нажмите любую клавишу для продолжения ");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Показывает подменю с дополнительными действиями (тонировка, скрутка пробега)
+        /// </summary>
+        static void SecretFunctions()
+        {
+            Console.Clear();
+            Console.WriteLine("Заходя сюда вы возможно нарушите какой-либо закон;)");
+
+            while (true)
+            {
+                Console.WriteLine("1 - Добавить тонировку");
+                Console.WriteLine("2 - Скрутить пробег");
+                Console.WriteLine("0 - Назад");
+                Console.Write("Ваш выбор: ");
+                string choice = Console.ReadLine() ?? "";
+
+                switch (choice)
+                {
+                    case "1":
+                        AddTinting();
+                        break;
+                    case "2":
+                        RollBackMileage();
+                        break;
+                    case "0":
+                        return;
+                    default:
+                        Console.Clear();
+                        Console.WriteLine("Неверный выбор. Попробуйте снова.");
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Запрашивает ID машины и включает у неё тонировку окон.
+        /// </summary>
+        static void AddTinting()
+        {
+            Console.Clear();
+            AllCars();
+            int id = ReadInt("Введите ID машины : ");
+            var car = logic.CarId(id);
+
+            if (car == null)
+            {
+                Console.WriteLine($"Машина с ID {id} не найдена.");
+                Console.WriteLine("Нажмите любую клавишу для продолжения ");
+                Console.ReadKey();
+                return;
+            }
+
+            car.WindowTinting = true;
+            Console.WriteLine($"Тонировка добавлена для машины с ID {id}.");
+            Console.WriteLine("Нажмите любую клавишу для продолжения ");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Запрашивает ID машины и новый пробег, устанавливает его,
+        /// если новое значение меньше текущего 
+        /// </summary>
+        static void RollBackMileage()
+        {
+            Console.Clear();
+            AllCars();
+            int id = ReadInt("Введите ID машины : ");
+            var car = logic.CarId(id);
+
+            if (car == null)
+            {
+                Console.WriteLine($"Машина с ID {id} не найдена.");
+                Console.WriteLine("Нажмите любую клавишу для продолжения ");
+                Console.ReadKey();
+                return;
+            }
+
+            int newMileage = ReadInt("Введите новый пробег: ");
+
+            if (newMileage < car.Mileage)
+            {
+                car.Mileage = newMileage;
+                Console.WriteLine($"Пробег машины с ID {id} скручен до {newMileage} км.");
+            }
+            else
+            {
+                Console.WriteLine("Новый пробег должен быть меньше текущего.");
+            }
+            Console.WriteLine("Нажмите любую клавишу для продолжения ");
+            Console.ReadKey();
         }
     }
 }

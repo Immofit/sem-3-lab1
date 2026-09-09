@@ -7,12 +7,7 @@ namespace ConsoleApp
         static Logic logic = new Logic();
         static void Main(string[] args)
         {
-            logic.CreateCar("Toyota", "Camry", "Белый", 2018);
-            logic.CreateCar("Lada", "Vesta", "Красный", 2021);
-            logic.CreateCar("BMW", "X5", "Чёрный", 2023);
-            logic.CreateCar("Mercedes", "GLX", "Сурый", 2026);
-            logic.CreateCar("Ferrari", "Spider", "Синий", 2018);
-            logic.CreateCar("Haval", "Dargo X", "Чёрный", 2024);
+            
 
             bool exit = false;
             while (!exit)
@@ -36,7 +31,7 @@ namespace ConsoleApp
                             UpdateCar();
                             break;
                         case "5":
-                            GroupByBrand();
+                            GroupBrand();
                             break;
                         case "6":
                             CarsYear();
@@ -51,7 +46,7 @@ namespace ConsoleApp
                     }
                 }
 
-                static void Menu()
+                static void Menu()//Меню
                 {
                     Console.WriteLine("---- МЕНЮ ----");
                     Console.WriteLine("1 - Создать машину");
@@ -64,7 +59,7 @@ namespace ConsoleApp
                     Console.Write("Ваш выбор: ");
                 }
 
-                static void AddCar()
+                static void AddCar()//Добавить Машину
                 {
                     Console.Clear();
                     Console.Write("Введите марку машины: ");
@@ -75,11 +70,15 @@ namespace ConsoleApp
                     string color = Console.ReadLine();
                     Console.Write("Введите год выпуска машины: ");
                     int year = int.Parse(Console.ReadLine());
-                    var car = logic.CreateCar(brand, model, color, year);
+                    Console.Write("Введите пробег машины: ");
+                    int mileage = int.Parse(Console.ReadLine());
+                    Console.Write("Введите значение остекления (true/false): ");
+                    bool windowTinting = bool.Parse(Console.ReadLine());
+                    var car = logic.CreateCar(brand, model, color, year, mileage, windowTinting);
                     Console.WriteLine("Машина создана: " + car);
                 }
 
-                static void DeleteCar()
+                static void DeleteCar()//Удалить Машину
                 {
                     Console.Clear();
                     Console.Write("Введите ID машины для удаления: ");
@@ -95,7 +94,7 @@ namespace ConsoleApp
                     }
                 }
 
-                static void AllCars()
+                static void AllCars()//Все машины
                 {
                     Console.Clear();
                     var cars = logic.AllCars();
@@ -106,7 +105,7 @@ namespace ConsoleApp
                     }
                 }
 
-                static void UpdateCar()
+                static void UpdateCar()//Изменить машину
                 {
                     Console.Clear();
                     Console.Write("Введите ID машины для изменения: ");
@@ -133,7 +132,7 @@ namespace ConsoleApp
                     
                 }
 
-                static void GroupByBrand()
+                static void GroupBrand()//Группировка машин по бренду
                 {
                     Console.Clear();
                     var carsByBrand = logic.CarsBrand();
@@ -148,7 +147,7 @@ namespace ConsoleApp
                     }
                 }
 
-                static void CarsYear()
+                static void CarsYear()//Показать машины определенного года
                 {
                     Console.Clear();
                     Console.Write("Введите год: ");

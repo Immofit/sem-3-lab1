@@ -1,6 +1,7 @@
 using Microsoft.VisualBasic;
 using Model;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace Presentation.WinForms
 {
@@ -146,6 +147,8 @@ namespace Presentation.WinForms
 
             if (secretMode)
             {
+                this.BackColor = System.Drawing.Color.FromArgb(25, 25, 25);
+
                 pictureBox.Visible = true;
                 Secret.Text = "Выйти из секретного режима";
                 MileageDown.Visible = true;
@@ -153,7 +156,6 @@ namespace Presentation.WinForms
             }
             else
             {
-                // Выключаем секретный режим
                 this.BackColor = SystemColors.Control;
 
                 pictureBox.Visible = false;

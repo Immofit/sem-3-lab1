@@ -214,6 +214,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(800, 450);
             Controls.Add(pictureBox);
             Controls.Add(TiningSet);
@@ -226,8 +227,9 @@
             Controls.Add(DeleteCar);
             Controls.Add(GetCars);
             Controls.Add(Table);
+            ForeColor = SystemColors.ControlText;
             Name = "Form1";
-            Text = "Form1";
+            Text = "Автосалон";
             ((System.ComponentModel.ISupportInitialize)Table).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             ResumeLayout(false);

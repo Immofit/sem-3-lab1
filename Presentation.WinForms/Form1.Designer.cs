@@ -29,60 +29,27 @@
         private void InitializeComponent()
         {
             Table = new DataGridView();
+            GetCars = new Button();
+            DeleteCar = new Button();
+            CreateCar = new Button();
             ID = new DataGridViewTextBoxColumn();
             Brand = new DataGridViewTextBoxColumn();
             Model = new DataGridViewTextBoxColumn();
             Color = new DataGridViewTextBoxColumn();
             Year = new DataGridViewTextBoxColumn();
-            GetCars = new Button();
-            DeleteCar = new Button();
-            CreateCar = new Button();
+            Mileage = new DataGridViewTextBoxColumn();
+            WindowTinting = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)Table).BeginInit();
             SuspendLayout();
             // 
             // Table
             // 
             Table.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            Table.Columns.AddRange(new DataGridViewColumn[] { ID, Brand, Model, Color, Year });
+            Table.Columns.AddRange(new DataGridViewColumn[] { ID, Brand, Model, Color, Year, Mileage, WindowTinting });
             Table.Location = new Point(276, 44);
             Table.Name = "Table";
             Table.Size = new Size(512, 394);
             Table.TabIndex = 0;
-            // 
-            // ID
-            // 
-            ID.DataPropertyName = "Id";
-            ID.HeaderText = "ID";
-            ID.Name = "ID";
-            ID.Width = 30;
-            // 
-            // Brand
-            // 
-            Brand.DataPropertyName = "Brand";
-            Brand.HeaderText = "Brand";
-            Brand.Name = "Brand";
-            Brand.Width = 110;
-            // 
-            // Model
-            // 
-            Model.DataPropertyName = "Model";
-            Model.HeaderText = "Model";
-            Model.Name = "Model";
-            Model.Width = 110;
-            // 
-            // Color
-            // 
-            Color.DataPropertyName = "Color";
-            Color.HeaderText = "Color";
-            Color.Name = "Color";
-            Color.Width = 110;
-            // 
-            // Year
-            // 
-            Year.DataPropertyName = "Year";
-            Year.HeaderText = "Year";
-            Year.Name = "Year";
-            Year.Width = 110;
             // 
             // GetCars
             // 
@@ -114,6 +81,54 @@
             CreateCar.UseVisualStyleBackColor = true;
             CreateCar.Click += CreateCar_Click;
             // 
+            // ID
+            // 
+            ID.DataPropertyName = "Id";
+            ID.HeaderText = "ID";
+            ID.Name = "ID";
+            ID.Width = 30;
+            // 
+            // Brand
+            // 
+            Brand.DataPropertyName = "Brand";
+            Brand.HeaderText = "Brand";
+            Brand.Name = "Brand";
+            Brand.Width = 70;
+            // 
+            // Model
+            // 
+            Model.DataPropertyName = "Model";
+            Model.HeaderText = "Model";
+            Model.Name = "Model";
+            Model.Width = 70;
+            // 
+            // Color
+            // 
+            Color.DataPropertyName = "Color";
+            Color.HeaderText = "Color";
+            Color.Name = "Color";
+            Color.Width = 70;
+            // 
+            // Year
+            // 
+            Year.DataPropertyName = "Year";
+            Year.HeaderText = "Year";
+            Year.Name = "Year";
+            Year.Width = 70;
+            // 
+            // Mileage
+            // 
+            Mileage.DataPropertyName = "mileage";
+            Mileage.HeaderText = "Mileage";
+            Mileage.Name = "Mileage";
+            Mileage.Width = 70;
+            // 
+            // WindowTinting
+            // 
+            WindowTinting.DataPropertyName = "windowTinting";
+            WindowTinting.HeaderText = "WindowTinting";
+            WindowTinting.Name = "WindowTinting";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -133,12 +148,14 @@
 
         private DataGridView Table;
         private Button GetCars;
+        private Button DeleteCar;
+        private Button CreateCar;
         private DataGridViewTextBoxColumn ID;
         private DataGridViewTextBoxColumn Brand;
         private DataGridViewTextBoxColumn Model;
         private DataGridViewTextBoxColumn Color;
         private DataGridViewTextBoxColumn Year;
-        private Button DeleteCar;
-        private Button CreateCar;
+        private DataGridViewTextBoxColumn Mileage;
+        private DataGridViewTextBoxColumn WindowTinting;
     }
 }

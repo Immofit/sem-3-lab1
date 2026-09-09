@@ -38,14 +38,13 @@ namespace Presentation.WinForms
                 Model = modelBox.Text,
                 Color = colorBox.Text,
                 Year = (int)yearBox.Value,
-                Mileage = (int)mileageBox.Value
             };
             Close();
         }
 
-        public (string brand, string model, string color, int year, int mileage) GetValues()
+        public (string brand, string model, string color, int year) GetValues()
         {
-            return (brandBox.Text, modelBox.Text, colorBox.Text, (int)yearBox.Value, (int)mileageBox.Value);
+            return (brandBox.Text, modelBox.Text, colorBox.Text, (int)yearBox.Value);
         }
     }
 }

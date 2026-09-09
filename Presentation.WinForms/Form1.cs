@@ -59,8 +59,6 @@ namespace Presentation.WinForms
 
             logic.DeleteCar(selectedCar.Id);
 
-            Table.ClearSelection();
-            Table.DataSource = null;
             Table.DataSource = logic.AllCars();
         }
     }

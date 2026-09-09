@@ -32,16 +32,13 @@
             brandBox = new TextBox();
             modelLabel = new Label();
             colorLabel = new Label();
-            mileageLabel = new Label();
             yearLabel = new Label();
             modelBox = new TextBox();
             colorBox = new TextBox();
             yearBox = new NumericUpDown();
-            mileageBox = new NumericUpDown();
             addButton = new Button();
             closeButton = new Button();
             ((System.ComponentModel.ISupportInitialize)yearBox).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)mileageBox).BeginInit();
             SuspendLayout();
             // 
             // brandLabel
@@ -78,15 +75,6 @@
             colorLabel.TabIndex = 3;
             colorLabel.Text = "Цвет:";
             // 
-            // mileageLabel
-            // 
-            mileageLabel.AutoSize = true;
-            mileageLabel.Location = new Point(29, 161);
-            mileageLabel.Name = "mileageLabel";
-            mileageLabel.Size = new Size(51, 15);
-            mileageLabel.TabIndex = 4;
-            mileageLabel.Text = "Пробег:";
-            // 
             // yearLabel
             // 
             yearLabel.AutoSize = true;
@@ -113,16 +101,10 @@
             // yearBox
             // 
             yearBox.Location = new Point(122, 130);
+            yearBox.Maximum = new decimal(new int[] { 2026, 0, 0, 0 });
             yearBox.Name = "yearBox";
             yearBox.Size = new Size(134, 23);
             yearBox.TabIndex = 8;
-            // 
-            // mileageBox
-            // 
-            mileageBox.Location = new Point(122, 159);
-            mileageBox.Name = "mileageBox";
-            mileageBox.Size = new Size(134, 23);
-            mileageBox.TabIndex = 9;
             // 
             // addButton
             // 
@@ -151,12 +133,10 @@
             ClientSize = new Size(284, 281);
             Controls.Add(closeButton);
             Controls.Add(addButton);
-            Controls.Add(mileageBox);
             Controls.Add(yearBox);
             Controls.Add(colorBox);
             Controls.Add(modelBox);
             Controls.Add(yearLabel);
-            Controls.Add(mileageLabel);
             Controls.Add(colorLabel);
             Controls.Add(modelLabel);
             Controls.Add(brandBox);
@@ -167,7 +147,6 @@
             Name = "AddCarForm";
             Text = "Добавить машину";
             ((System.ComponentModel.ISupportInitialize)yearBox).EndInit();
-            ((System.ComponentModel.ISupportInitialize)mileageBox).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -178,12 +157,10 @@
         private TextBox brandBox;
         private Label modelLabel;
         private Label colorLabel;
-        private Label mileageLabel;
         private Label yearLabel;
         private TextBox modelBox;
         private TextBox colorBox;
         private NumericUpDown yearBox;
-        private NumericUpDown mileageBox;
         private Button addButton;
         private Button closeButton;
     }

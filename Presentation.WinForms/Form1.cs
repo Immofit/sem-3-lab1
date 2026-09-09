@@ -1,9 +1,12 @@
 using Model;
+using System.ComponentModel;
 
 namespace Presentation.WinForms
 {
     public partial class Form1 : Form
     {
+
+        private BindingList<Car> carsBinding;
         public Form1()
         {
             InitializeComponent();
@@ -18,14 +21,29 @@ namespace Presentation.WinForms
         Logic logic = new Logic();
 
 
+        private void RefreshTable()
+        {
+            carsBinding = new BindingList<Car>(logic.AllCars());
+            Table.DataSource = carsBinding;
+        }
+
+
         private void GetCars_Click(object sender, EventArgs e)
         {
-            Table.DataSource = logic.AllCars();
+            RefreshTable();
         }
 
         private void CreateCar_Click(object sender, EventArgs e)
         {
-
+            using (var addForm = new AddCarForm())
+            {
+                if (addForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    var values = addForm.GetValues();
+                    logic.CreateCar(values.brand, values.model, values.color, values.year, values.mileage);
+                    RefreshTable();
+                }
+            }
         }
 
 

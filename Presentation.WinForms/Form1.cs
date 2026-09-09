@@ -9,6 +9,7 @@ namespace Presentation.WinForms
 
         Logic logic = new Logic();
         private BindingList<Car> carsBinding;
+        private bool secretMode = false;
         public Form1()
         {
             InitializeComponent();
@@ -136,6 +137,30 @@ namespace Presentation.WinForms
 
             carsBinding = new BindingList<Car>(result);
             Table.DataSource = carsBinding;
+        }
+
+        private void Secret_Click(object sender, EventArgs e)
+        {
+            secretMode = !secretMode;
+
+
+            if (secretMode)
+            {
+                pictureBox.Visible = true;
+                Secret.Text = "Выйти из секретного режима";
+                MileageDown.Visible = true;
+                TiningSet.Visible = true;
+            }
+            else
+            {
+                // Выключаем секретный режим
+                this.BackColor = SystemColors.Control;
+
+                pictureBox.Visible = false;
+                Secret.Text = "Секретные функции";
+                MileageDown.Visible = false;
+                TiningSet.Visible = false;
+            }
         }
     }
 }

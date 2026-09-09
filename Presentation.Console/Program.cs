@@ -7,16 +7,14 @@ namespace ConsoleApp
         static Logic logic = new Logic();
         static void Main(string[] args)
         {
-            
-
             bool exit = false;
             while (!exit)
             {
                 Menu();
-                Console.Write("Введите ваш выбор: ");
-                string qwert = Console.ReadLine();
+                Console.Write($"Введите ваш выбор: ");
+                string choice = Console.ReadLine();
                 {
-                    switch (qwert)
+                    switch (choice)
                     {
                         case "1":
                             AddCar();
@@ -45,7 +43,6 @@ namespace ConsoleApp
                             break;
                     }
                 }
-
                 static void Menu()//Меню
                 {
                     Console.WriteLine("---- МЕНЮ ----");
@@ -55,6 +52,8 @@ namespace ConsoleApp
                     Console.WriteLine("4 - Изменить машину");
                     Console.WriteLine("5 - Группировка машин по марке");
                     Console.WriteLine("6 - Показать машины определенного года");
+                    Console.WriteLine("7 - Показать машины по цвету");
+                    
                     Console.WriteLine("0 - Выход");
                     Console.Write("Ваш выбор: ");
                 }
@@ -72,9 +71,8 @@ namespace ConsoleApp
                     int year = int.Parse(Console.ReadLine());
                     Console.Write("Введите пробег машины: ");
                     int mileage = int.Parse(Console.ReadLine());
-                    Console.Write("Введите значение остекления (true/false): ");
-                    bool windowTinting = bool.Parse(Console.ReadLine());
-                    var car = logic.CreateCar(brand, model, color, year, mileage, windowTinting);
+                   
+                    var car = logic.CreateCar(brand, model, color, year, mileage);
                     Console.WriteLine("Машина создана: " + car);
                 }
 

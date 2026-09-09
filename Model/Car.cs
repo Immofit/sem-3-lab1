@@ -18,7 +18,6 @@ namespace Model
             Color = color;
             Year = year;
         }
-
         public override string ToString()
         {
             return "Id=" + Id + " | " + Brand + " " + Model + " | Цвет: " + Color + " | " + Year + " год";

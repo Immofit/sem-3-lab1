@@ -31,7 +31,17 @@ namespace Presentation.WinForms
 
         private void DeleteCar_Click(object sender, EventArgs e)
         {
+            if (Table.CurrentRow?.DataBoundItem is not Car selectedCar)
+            {
+                MessageBox.Show("Сначала выберите машину в таблице");
+                return;
+            }
 
+            logic.DeleteCar(selectedCar.Id);
+
+            Table.ClearSelection();
+            Table.DataSource = null;
+            Table.DataSource = logic.AllCars();
         }
     }
 }

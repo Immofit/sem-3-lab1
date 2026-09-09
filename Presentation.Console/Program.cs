@@ -51,8 +51,9 @@ namespace ConsoleApp
                         exit = true;
                         break;
                     default:
-                        Console.Clear();
                         Console.WriteLine("Неверный выбор. Попробуйте снова.");
+                        Console.WriteLine("Нажмите любую клавишу для продолжения ");
+                        Console.ReadKey();
                         break;
                 }
             }
@@ -71,6 +72,22 @@ namespace ConsoleApp
                 Console.Write(prompt);
             }
             return result;
+        }
+
+        /// <summary>
+        /// Проверяет, есть ли вообще машины в базе. Если список пуст — выводит сообщение,
+        /// делает паузу и возвращает true, чтобы вызывающий метод мог сразу выйти.
+        /// </summary>
+        static bool NoCars()
+        {
+            if (logic.AllCars().Count == 0)
+            {
+                Console.WriteLine("Список машин пуст.");
+                Console.WriteLine("Нажмите любую клавишу для продолжения ");
+                Console.ReadKey();
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -96,7 +113,6 @@ namespace ConsoleApp
         /// </summary>
         static void AddCar()
         {
-            Console.Clear();
             Console.Write("Введите марку машины: ");
             string brand = Console.ReadLine() ?? "";
             Console.Write("Введите модель машины: ");
@@ -117,7 +133,8 @@ namespace ConsoleApp
         /// </summary>
         static void DeleteCar()
         {
-            Console.Clear();
+            if (NoCars()) return;
+
             int id = ReadInt("Введите ID машины для удаления: ");
             bool deleted = logic.DeleteCar(id);
 
@@ -134,21 +151,14 @@ namespace ConsoleApp
         /// </summary>
         static void AllCars()
         {
-            Console.Clear();
+            if (NoCars()) return;
             var cars = logic.AllCars();
-            
-            if (cars.Count==0)
+            Console.WriteLine("Все машины:");
+            foreach (var car in cars)
             {
-                Console.WriteLine("Список машин пуст.");
+                Console.WriteLine(car);
             }
-            else
-            { 
-                Console.WriteLine("Все машины:");
-                foreach (var car in cars)
-                {
-                    Console.WriteLine(car);
-                }
-            }
+
             Console.WriteLine("Нажмите любую клавишу для продолжения ");
             Console.ReadKey();
         }
@@ -158,7 +168,7 @@ namespace ConsoleApp
         /// </summary>
         static void UpdateCar()
         {
-            Console.Clear();
+            if (NoCars()) return;
 
             int id = ReadInt("Введите ID машины для изменения: ");
             var car = logic.CarId(id);
@@ -193,7 +203,8 @@ namespace ConsoleApp
         /// </summary>
         static void GroupBrand()
         {
-            Console.Clear();
+            if (NoCars()) return;
+
             var carsByBrand = logic.CarsBrand();
             Console.WriteLine("Группировка машин по бренду:");
 
@@ -214,7 +225,8 @@ namespace ConsoleApp
         /// </summary>
         static void CarsYear()
         {
-            Console.Clear();
+            if (NoCars()) return;
+
             AllCars();
             int year = ReadInt("Введите год: ");
 
@@ -242,7 +254,8 @@ namespace ConsoleApp
         /// </summary>
         static void CarsColor()
         {
-            Console.Clear();
+            if (NoCars()) return;
+
             Console.Write("Введите цвет: ");
             string color = Console.ReadLine() ?? "";
             var cars = logic.CarsColor(color);
@@ -269,11 +282,11 @@ namespace ConsoleApp
         /// </summary>
         static void SecretFunctions()
         {
-            Console.Clear();
             Console.WriteLine("Заходя сюда вы возможно нарушите какой-либо закон;)");
 
             while (true)
             {
+                Console.Clear();
                 Console.WriteLine("1 - Добавить тонировку");
                 Console.WriteLine("2 - Скрутить пробег");
                 Console.WriteLine("0 - Назад");
@@ -291,8 +304,9 @@ namespace ConsoleApp
                     case "0":
                         return;
                     default:
-                        Console.Clear();
                         Console.WriteLine("Неверный выбор. Попробуйте снова.");
+                        Console.WriteLine("Нажмите любую клавишу для продолжения ");
+                        Console.ReadKey();
                         break;
                 }
             }
@@ -303,7 +317,8 @@ namespace ConsoleApp
         /// </summary>
         static void AddTinting()
         {
-            Console.Clear();
+            if (NoCars()) return;
+
             AllCars();
             int id = ReadInt("Введите ID машины : ");
             var car = logic.CarId(id);
@@ -328,7 +343,8 @@ namespace ConsoleApp
         /// </summary>
         static void RollBackMileage()
         {
-            Console.Clear();
+            if (NoCars()) return;
+
             AllCars();
             int id = ReadInt("Введите ID машины : ");
             var car = logic.CarId(id);

@@ -108,20 +108,20 @@
             // 
             // addButton
             // 
-            addButton.Location = new Point(29, 216);
+            addButton.Location = new Point(12, 228);
             addButton.Name = "addButton";
-            addButton.Size = new Size(75, 23);
+            addButton.Size = new Size(119, 41);
             addButton.TabIndex = 10;
-            addButton.Text = "Добавить";
+            addButton.Text = "Применить";
             addButton.UseVisualStyleBackColor = true;
             addButton.Click += AddButton_Click;
             // 
             // closeButton
             // 
             closeButton.DialogResult = DialogResult.Cancel;
-            closeButton.Location = new Point(151, 218);
+            closeButton.Location = new Point(153, 228);
             closeButton.Name = "closeButton";
-            closeButton.Size = new Size(75, 23);
+            closeButton.Size = new Size(119, 41);
             closeButton.TabIndex = 11;
             closeButton.Text = "Закрыть";
             closeButton.UseVisualStyleBackColor = true;

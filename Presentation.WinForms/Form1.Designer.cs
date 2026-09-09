@@ -29,9 +29,6 @@
         private void InitializeComponent()
         {
             Table = new DataGridView();
-            GetCars = new Button();
-            DeleteCar = new Button();
-            CreateCar = new Button();
             ID = new DataGridViewTextBoxColumn();
             Brand = new DataGridViewTextBoxColumn();
             Model = new DataGridViewTextBoxColumn();
@@ -39,6 +36,12 @@
             Year = new DataGridViewTextBoxColumn();
             Mileage = new DataGridViewTextBoxColumn();
             WindowTinting = new DataGridViewTextBoxColumn();
+            GetCars = new Button();
+            DeleteCar = new Button();
+            CreateCar = new Button();
+            UpdateCar = new Button();
+            CarsYear = new Button();
+            ColorCar = new Button();
             ((System.ComponentModel.ISupportInitialize)Table).BeginInit();
             SuspendLayout();
             // 
@@ -50,36 +53,6 @@
             Table.Name = "Table";
             Table.Size = new Size(512, 394);
             Table.TabIndex = 0;
-            // 
-            // GetCars
-            // 
-            GetCars.Location = new Point(12, 415);
-            GetCars.Name = "GetCars";
-            GetCars.Size = new Size(247, 23);
-            GetCars.TabIndex = 1;
-            GetCars.Text = "Получить все машины";
-            GetCars.UseVisualStyleBackColor = true;
-            GetCars.Click += GetCars_Click;
-            // 
-            // DeleteCar
-            // 
-            DeleteCar.Location = new Point(141, 377);
-            DeleteCar.Name = "DeleteCar";
-            DeleteCar.Size = new Size(118, 23);
-            DeleteCar.TabIndex = 3;
-            DeleteCar.Text = "Удалить машину";
-            DeleteCar.UseVisualStyleBackColor = true;
-            DeleteCar.Click += DeleteCar_Click;
-            // 
-            // CreateCar
-            // 
-            CreateCar.Location = new Point(12, 377);
-            CreateCar.Name = "CreateCar";
-            CreateCar.Size = new Size(123, 23);
-            CreateCar.TabIndex = 4;
-            CreateCar.Text = "Создать машину";
-            CreateCar.UseVisualStyleBackColor = true;
-            CreateCar.Click += CreateCar_Click;
             // 
             // ID
             // 
@@ -130,11 +103,74 @@
             WindowTinting.Name = "WindowTinting";
             WindowTinting.Width = 90;
             // 
+            // GetCars
+            // 
+            GetCars.Location = new Point(12, 415);
+            GetCars.Name = "GetCars";
+            GetCars.Size = new Size(247, 23);
+            GetCars.TabIndex = 1;
+            GetCars.Text = "Получить все машины";
+            GetCars.UseVisualStyleBackColor = true;
+            GetCars.Click += GetCars_Click;
+            // 
+            // DeleteCar
+            // 
+            DeleteCar.Location = new Point(141, 386);
+            DeleteCar.Name = "DeleteCar";
+            DeleteCar.Size = new Size(118, 23);
+            DeleteCar.TabIndex = 3;
+            DeleteCar.Text = "Удалить машину";
+            DeleteCar.UseVisualStyleBackColor = true;
+            DeleteCar.Click += DeleteCar_Click;
+            // 
+            // CreateCar
+            // 
+            CreateCar.Location = new Point(12, 386);
+            CreateCar.Name = "CreateCar";
+            CreateCar.Size = new Size(123, 23);
+            CreateCar.TabIndex = 4;
+            CreateCar.Text = "Создать машину";
+            CreateCar.UseVisualStyleBackColor = true;
+            CreateCar.Click += CreateCar_Click;
+            // 
+            // UpdateCar
+            // 
+            UpdateCar.Location = new Point(12, 357);
+            UpdateCar.Name = "UpdateCar";
+            UpdateCar.Size = new Size(123, 23);
+            UpdateCar.TabIndex = 5;
+            UpdateCar.Text = "Изменить машину";
+            UpdateCar.UseVisualStyleBackColor = true;
+            UpdateCar.Click += UpdateCar_Click;
+            // 
+            // CarsYear
+            // 
+            CarsYear.Location = new Point(12, 328);
+            CarsYear.Name = "CarsYear";
+            CarsYear.Size = new Size(247, 23);
+            CarsYear.TabIndex = 6;
+            CarsYear.Text = "Показать машины по году";
+            CarsYear.UseVisualStyleBackColor = true;
+            CarsYear.Click += CarAge_Click;
+            // 
+            // ColorCar
+            // 
+            ColorCar.Location = new Point(12, 299);
+            ColorCar.Name = "ColorCar";
+            ColorCar.Size = new Size(247, 23);
+            ColorCar.TabIndex = 7;
+            ColorCar.Text = "Показать машину по цвету";
+            ColorCar.UseVisualStyleBackColor = true;
+            ColorCar.Click += ColorCar_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(ColorCar);
+            Controls.Add(CarsYear);
+            Controls.Add(UpdateCar);
             Controls.Add(CreateCar);
             Controls.Add(DeleteCar);
             Controls.Add(GetCars);
@@ -151,6 +187,7 @@
         private Button GetCars;
         private Button DeleteCar;
         private Button CreateCar;
+        private Button UpdateCar;
         private DataGridViewTextBoxColumn ID;
         private DataGridViewTextBoxColumn Brand;
         private DataGridViewTextBoxColumn Model;
@@ -158,5 +195,7 @@
         private DataGridViewTextBoxColumn Year;
         private DataGridViewTextBoxColumn Mileage;
         private DataGridViewTextBoxColumn WindowTinting;
+        private Button CarsYear;
+        private Button ColorCar;
     }
 }

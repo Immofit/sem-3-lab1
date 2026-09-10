@@ -75,6 +75,40 @@ namespace ConsoleApp
         }
 
         /// <summary>
+        /// Запрашивает у пользователя непустую строку и повторяет запрос, пока ввод пустой.
+        /// </summary>
+        static string ReadNonEmptyString(string prompt, string errorMessage)
+        {
+            Console.Write(prompt);
+            string input = Console.ReadLine() ?? "";
+
+            while (input == "")
+            {
+                Console.WriteLine(errorMessage);
+                Console.Write(prompt);
+                input = Console.ReadLine() ?? "";
+            }
+
+            return input;
+        }
+
+        /// <summary>
+        /// Запрашивает у пользователя год выпуска и повторяет запрос, пока год некорректный.
+        /// </summary>
+        static int ReadYear(string prompt)
+        {
+            int year = ReadInt(prompt);
+
+            while (year < 1900 || year > DateTime.Now.Year)
+            {
+                Console.WriteLine("Некорректный год выпуска.");
+                year = ReadInt(prompt);
+            }
+
+            return year;
+        }
+
+        /// <summary>
         /// Проверяет, есть ли вообще машины в базе. Если список пуст — выводит сообщение,
         /// делает паузу и возвращает true, чтобы вызывающий метод мог сразу выйти.
         /// </summary>
@@ -113,17 +147,18 @@ namespace ConsoleApp
         /// </summary>
         static void AddCar()
         {
-            Console.Write("Введите марку машины: ");
-            string brand = Console.ReadLine() ?? "";
-            Console.Write("Введите модель машины: ");
-            string model = Console.ReadLine() ?? "";
-            Console.Write("Введите цвет машины: ");
-            string color = Console.ReadLine() ?? "";
-            int year = ReadInt("Введите год выпуска машины: ");
+            string brand = ReadNonEmptyString("Введите марку машины: ", "Бренд не может быть пустым.");
+            string model = ReadNonEmptyString("Введите модель машины: ", "Модель не может быть пустой.");
+            string color = ReadNonEmptyString("Введите цвет машины: ", "Цвет не может быть пустым.");
+            int year = ReadYear("Введите год выпуска машины: ");
 
-            // Пробег генерируется случайно внутри CreateCar
             var car = logic.CreateCar(brand, model, color, year);
-            Console.WriteLine($"Машина создана: {car}");
+
+            if (car != null)
+            {
+                Console.WriteLine($"Машина создана: {car}");
+            }
+
             Console.WriteLine("Нажмите любую клавишу для продолжения ");
             Console.ReadKey();
         }
@@ -181,13 +216,10 @@ namespace ConsoleApp
                 return;
             }
 
-            Console.Write("Введите новую марку машины: ");
-            string brand = Console.ReadLine() ?? "";
-            Console.Write("Введите новую модель машины: ");
-            string model = Console.ReadLine() ?? "";
-            Console.Write("Введите новый цвет машины: ");
-            string color = Console.ReadLine() ?? "";
-            int year = ReadInt("Введите новый год выпуска машины: ");
+            string brand = ReadNonEmptyString("Введите новую марку машины: ", "Бренд не может быть пустым.");
+            string model = ReadNonEmptyString("Введите новую модель машины: ", "Модель не может быть пустой.");
+            string color = ReadNonEmptyString("Введите новый цвет машины: ", "Цвет не может быть пустым.");
+            int year = ReadYear("Введите новый год выпуска машины: ");
 
             bool updated = logic.UpdateCar(id, brand, model, color, year);
             if (updated)
@@ -256,8 +288,7 @@ namespace ConsoleApp
         {
             if (NoCars()) return;
 
-            Console.Write("Введите цвет: ");
-            string color = Console.ReadLine() ?? "";
+            string color = ReadNonEmptyString("Введите цвет: ", "Цвет не может быть пустым.");
             var cars = logic.CarsColor(color);
 
             if (cars.Count == 0)

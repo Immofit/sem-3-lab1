@@ -26,20 +26,32 @@ namespace Model
         /// <param name="model">Модель автомобиля.</param>
         /// <param name="color">Цвет автомобиля.</param>
         /// <param name="year">Год выпуска.</param>
-        /// <returns>Созданный объект машины.</returns>
-        /// <exception cref="ArgumentException">
-        /// Выбрасывается, если бренд, модель или цвет пустые, либо год выпуска некорректен.
-        /// </exception>
-        public Car CreateCar(string brand, string model, string color, int year)
+        /// <returns>Созданный объект машины или null, если данные некорректны.</returns>
+        public Car? CreateCar(string brand, string model, string color, int year)
         {
-            if (string.IsNullOrWhiteSpace(brand))
-                throw new ArgumentException("Бренд не может быть пустым.", nameof(brand));
-            if (string.IsNullOrWhiteSpace(model))
-                throw new ArgumentException("Модель не может быть пустой.", nameof(model));
-            if (string.IsNullOrWhiteSpace(color))
-                throw new ArgumentException("Цвет не может быть пустым.", nameof(color));
+            if (brand == "" || brand == null)
+            {
+                Console.WriteLine("Бренд не может быть пустым.");
+                return null;
+            }
+
+            if (model == "" || model == null)
+            {
+                Console.WriteLine("Модель не может быть пустой.");
+                return null;
+            }
+
+            if (color == "" || color == null)
+            {
+                Console.WriteLine("Цвет не может быть пустым.");
+                return null;
+            }
+
             if (year < 1900 || year > DateTime.Now.Year)
-                throw new ArgumentException("Некорректный год выпуска.", nameof(year));
+            {
+                Console.WriteLine("Некорректный год выпуска.");
+                return null;
+            }
 
             int mileage = random.Next(1000, 200000);
             var car = new Car(nextId++, brand, model, color, year, mileage);
@@ -54,7 +66,7 @@ namespace Model
         /// <returns>true, если машина найдена и удалена; иначе false.</returns>
         public bool DeleteCar(int id)
         {
-            Car? car = null; 
+            Car? car = null;
             for (int i = 0; i < cars.Count; i++)
             {
                 if (cars[i].Id == id)
@@ -85,7 +97,7 @@ namespace Model
         /// </summary>
         /// <param name="id">Идентификатор машины.</param>
         /// <returns>Найденная машина или null, если не найдена.</returns>
-        public Car? CarId(int id) 
+        public Car? CarId(int id)
         {
             for (int i = 0; i < cars.Count; i++)
             {
@@ -105,20 +117,32 @@ namespace Model
         /// <param name="model">Новая модель.</param>
         /// <param name="color">Новый цвет.</param>
         /// <param name="year">Новый год выпуска.</param>
-        /// <returns>true, если машина найдена и обновлена; иначе false.</returns>
-        /// <exception cref="ArgumentException">
-        /// Выбрасывается, если бренд, модель или цвет пустые, либо год выпуска некорректен.
-        /// </exception>
+        /// <returns>true, если машина найдена, данные корректны и обновление прошло успешно; иначе false.</returns>
         public bool UpdateCar(int id, string brand, string model, string color, int year)
         {
-            if (string.IsNullOrWhiteSpace(brand))
-                throw new ArgumentException("Бренд не может быть пустым.", nameof(brand));
-            if (string.IsNullOrWhiteSpace(model))
-                throw new ArgumentException("Модель не может быть пустой.", nameof(model));
-            if (string.IsNullOrWhiteSpace(color))
-                throw new ArgumentException("Цвет не может быть пустым.", nameof(color));
+            if (brand == "" || brand == null)
+            {
+                Console.WriteLine("Бренд не может быть пустым.");
+                return false;
+            }
+
+            if (model == "" || model == null)
+            {
+                Console.WriteLine("Модель не может быть пустой.");
+                return false;
+            }
+
+            if (color == "" || color == null)
+            {
+                Console.WriteLine("Цвет не может быть пустым.");
+                return false;
+            }
+
             if (year < 1900 || year > DateTime.Now.Year)
-                throw new ArgumentException("Некорректный год выпуска.", nameof(year));
+            {
+                Console.WriteLine("Некорректный год выпуска.");
+                return false;
+            }
 
             Car? car = null;
             for (int i = 0; i < cars.Count; i++)

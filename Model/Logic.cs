@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using System.Drawing;
 using System.Linq;
+using System.Text;
 
 namespace Model
 {
@@ -41,7 +42,7 @@ namespace Model
         /// <returns>true, если машина найдена и удалена; иначе false.</returns>
         public bool DeleteCar(int id)
         {
-            Car? car = null; // <- добавлен ? — переменная может быть null
+            Car? car = null; 
             for (int i = 0; i < cars.Count; i++)
             {
                 if (cars[i].Id == id)
@@ -72,7 +73,7 @@ namespace Model
         /// </summary>
         /// <param name="id">Идентификатор машины.</param>
         /// <returns>Найденная машина или null, если не найдена.</returns>
-        public Car? CarId(int id) // <- добавлен ? — метод может вернуть null
+        public Car? CarId(int id) 
         {
             for (int i = 0; i < cars.Count; i++)
             {
@@ -95,7 +96,7 @@ namespace Model
         /// <returns>true, если машина найдена и обновлена; иначе false.</returns>
         public bool UpdateCar(int id, string brand, string model, string color, int year)
         {
-            Car? car = null; // <- добавлен ?
+            Car? car = null; 
             for (int i = 0; i < cars.Count; i++)
             {
                 if (cars[i].Id == id)
@@ -169,6 +170,39 @@ namespace Model
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// Включает тонировку окон у машины с указанным идентификатором.
+        /// </summary>
+        /// <param name="id">Идентификатор машины.</param>
+        /// <returns>true, если машина найдена и тонировка добавлена; иначе false.</returns>
+        public bool AddTinting(int id)
+        {
+            var car = CarId(id);
+            if (car != null)
+            {
+                car.WindowTinting = true;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Скручивает пробег машины до нового значения, если оно меньше текущего.
+        /// </summary>
+        /// <param name="id">Идентификатор машины.</param>
+        /// <param name="newMileage">Новое значение пробега.</param>
+        /// <returns>true, если машина найдена и пробег успешно скручен; иначе false.</returns>
+        public bool RollBackMileage(int id, int newMileage)
+        {
+            var car = CarId(id);
+            if (car != null && newMileage < car.Mileage)
+            {
+                car.Mileage = newMileage;
+                return true;
+            }
+            return false;
         }
     }
 }

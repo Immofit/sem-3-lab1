@@ -321,18 +321,13 @@ namespace ConsoleApp
 
             AllCars();
             int id = ReadInt("Введите ID машины : ");
-            var car = logic.CarId(id);
 
-            if (car == null)
-            {
+            bool added = logic.AddTinting(id);
+            if (added)
+                Console.WriteLine($"Тонировка добавлена для машины с ID {id}.");
+            else
                 Console.WriteLine($"Машина с ID {id} не найдена.");
-                Console.WriteLine("Нажмите любую клавишу для продолжения ");
-                Console.ReadKey();
-                return;
-            }
 
-            car.WindowTinting = true;
-            Console.WriteLine($"Тонировка добавлена для машины с ID {id}.");
             Console.WriteLine("Нажмите любую клавишу для продолжения ");
             Console.ReadKey();
         }
@@ -347,8 +342,8 @@ namespace ConsoleApp
 
             AllCars();
             int id = ReadInt("Введите ID машины : ");
-            var car = logic.CarId(id);
 
+            var car = logic.CarId(id);
             if (car == null)
             {
                 Console.WriteLine($"Машина с ID {id} не найдена.");
@@ -358,16 +353,13 @@ namespace ConsoleApp
             }
 
             int newMileage = ReadInt("Введите новый пробег: ");
+            bool rolled = logic.RollBackMileage(id, newMileage);
 
-            if (newMileage < car.Mileage)
-            {
-                car.Mileage = newMileage;
+            if (rolled)
                 Console.WriteLine($"Пробег машины с ID {id} скручен до {newMileage} км.");
-            }
             else
-            {
                 Console.WriteLine("Новый пробег должен быть меньше текущего.");
-            }
+
             Console.WriteLine("Нажмите любую клавишу для продолжения ");
             Console.ReadKey();
         }

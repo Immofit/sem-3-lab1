@@ -9,7 +9,7 @@ namespace Presentation.WinForms
     {
 
         Logic logic = new Logic();
-        private BindingList<Car> carsBinding;
+        private BindingList<Car> carsBinding = new BindingList<Car>();
         private bool secretMode = false;
 
 
@@ -22,13 +22,6 @@ namespace Presentation.WinForms
             InitializeComponent();
 
             Table.ColumnHeaderMouseClick += Table_ColumnHeaderMouseClick;
-
-            logic.CreateCar("Toyota", "Camry", "Белый", 2018);
-            logic.CreateCar("Lada", "Vesta", "Красный", 2021);
-            logic.CreateCar("BMW", "X5", "Чёрный", 2023);
-            logic.CreateCar("Mercedes", "GLX", "Сурый", 2026);
-            logic.CreateCar("Ferrari", "Spider", "Синий", 2018);
-            logic.CreateCar("Haval", "Dargo X", "Чёрный", 2024);
         }
 
         /// <summary>
@@ -36,7 +29,7 @@ namespace Presentation.WinForms
         /// </summary>
         /// <param name="sender">Источник события.</param>
         /// <param name="e">Данные о столбце, по которому кликнули.</param>
-        private void Table_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void Table_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.ColumnIndex == 1)
             {
@@ -74,6 +67,8 @@ namespace Presentation.WinForms
         /// <summary>
         /// Обрабатывает нажатие кнопки "Создать машину" — открывает форму ввода данных
         /// и, если пользователь подтвердил ввод, создаёт новую машину через Logic.
+        /// При некорректных данных (пустые поля, неверный год) показывает пользователю
+        /// сообщение об ошибке вместо создания машины.
         /// </summary>
         /// <param name="sender">Источник события.</param>
         /// <param name="e">Данные события.</param>
@@ -85,8 +80,15 @@ namespace Presentation.WinForms
                 if (addForm.ShowDialog(this) == DialogResult.OK)
                 {
                     var values = addForm.GetValues();
-                    logic.CreateCar(values.brand, values.model, values.color, values.year);
-                    RefreshTable();
+                    try
+                    {
+                        logic.CreateCar(values.brand, values.model, values.color, values.year);
+                        RefreshTable();
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        MessageBox.Show(ex.Message, "Ошибка ввода");
+                    }
                 }
             }
         }
@@ -107,9 +109,11 @@ namespace Presentation.WinForms
                 return;
             }
 
-            logic.DeleteCar(selectedCar.Id);
+            Table.ClearSelection();
+            Table.CurrentCell = null;
 
-            Table.DataSource = logic.AllCars();
+            logic.DeleteCar(selectedCar.Id);
+            RefreshTable();
         }
 
 
@@ -118,6 +122,8 @@ namespace Presentation.WinForms
         /// <summary>
         /// Обрабатывает нажатие кнопки "Изменить машину" — открывает форму редактирования
         /// для выбранной в таблице машины и применяет изменения через Logic.
+        /// При некорректных данных (пустые поля, неверный год) показывает пользователю
+        /// сообщение об ошибке вместо изменения машины.
         /// </summary>
         /// <param name="sender">Источник события.</param>
         /// <param name="e">Данные события.</param>
@@ -135,8 +141,15 @@ namespace Presentation.WinForms
                 if (addForm.ShowDialog(this) == DialogResult.OK)
                 {
                     var values = addForm.GetValues();
-                    logic.UpdateCar(selectedCar.Id, values.brand, values.model, values.color, values.year);
-                    RefreshTable();
+                    try
+                    {
+                        logic.UpdateCar(selectedCar.Id, values.brand, values.model, values.color, values.year);
+                        RefreshTable();
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        MessageBox.Show(ex.Message, "Ошибка ввода");
+                    }
                 }
             }
         }
@@ -154,7 +167,7 @@ namespace Presentation.WinForms
         {
             string input = Interaction.InputBox("Введите год:", "Поиск машин", "");
 
-            if (!int.TryParse(input, out int year))
+            if (!int.TryParse(input, out int year) || year < 1900 || year > DateTime.Now.Year)
             {
                 MessageBox.Show("Введите корректный год.");
                 return;
@@ -234,6 +247,65 @@ namespace Presentation.WinForms
                 MileageDown.Visible = false;
                 TiningSet.Visible = false;
             }
+        }
+
+
+
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Скрутить пробег" — запрашивает у пользователя
+        /// новое значение пробега и применяет его к выбранной в таблице машине через Logic.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
+        private void RollBackMileage_Click(object sender, EventArgs e)
+        {
+            if (Table.CurrentRow?.DataBoundItem is not Car selectedCar)
+            {
+                MessageBox.Show("Сначала выберите машину в таблице");
+                return;
+            }
+
+            string input = Interaction.InputBox("Введите пробег:", "Скрутить пробег", "");
+
+            if (!int.TryParse(input, out int mileage) || mileage < 0)
+            {
+                MessageBox.Show("Введите корректный пробег (неотрицательное число).");
+                return;
+            }
+
+            bool success = logic.RollBackMileage(selectedCar.Id, mileage);
+            if (!success)
+            {
+                MessageBox.Show("Новый пробег должен быть меньше текущего.");
+                return;
+            }
+
+            RefreshTable();
+        }
+
+
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Поставить тонировку" — устанавливает тонировку
+        /// окон для выбранной в таблице машины через Logic.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
+        private void AddTinting_Click(object sender, EventArgs e)
+        {
+            if (Table.CurrentRow?.DataBoundItem is not Car selectedCar)
+            {
+                MessageBox.Show("Сначала выберите машину в таблице");
+                return;
+            }
+
+            bool success = logic.AddTinting(selectedCar.Id);
+            if (!success)
+            {
+                MessageBox.Show("Тонировка уже установлена на эту машину.");
+                return;
+            }
+
+            RefreshTable();
         }
     }
 }

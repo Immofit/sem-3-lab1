@@ -188,6 +188,7 @@
             MileageDown.Text = "Скрутить пробег";
             MileageDown.UseVisualStyleBackColor = true;
             MileageDown.Visible = false;
+            MileageDown.Click += RollBackMileage_Click;
             // 
             // TiningSet
             // 
@@ -198,6 +199,7 @@
             TiningSet.Text = "Поставить тонировку";
             TiningSet.UseVisualStyleBackColor = true;
             TiningSet.Visible = false;
+            TiningSet.Click += AddTinting_Click;
             // 
             // pictureBox
             // 

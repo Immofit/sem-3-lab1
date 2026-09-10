@@ -80,6 +80,13 @@ namespace Presentation.WinForms
                 if (addForm.ShowDialog(this) == DialogResult.OK)
                 {
                     var values = addForm.GetValues();
+
+                    if (values.year < 1900 || values.year > DateTime.Now.Year)
+                    {
+                        MessageBox.Show("Год должен быть не меньше 1900 и не больше текущего.", "Ошибка ввода");
+                        return;
+                    }
+
                     try
                     {
                         logic.CreateCar(values.brand, values.model, values.color, values.year);
@@ -141,6 +148,13 @@ namespace Presentation.WinForms
                 if (addForm.ShowDialog(this) == DialogResult.OK)
                 {
                     var values = addForm.GetValues();
+
+                    if (values.year < 1900 || values.year > DateTime.Now.Year)
+                    {
+                        MessageBox.Show("Год должен быть не меньше 1900 и не больше текущего.", "Ошибка ввода");
+                        return;
+                    }
+
                     try
                     {
                         logic.UpdateCar(selectedCar.Id, values.brand, values.model, values.color, values.year);

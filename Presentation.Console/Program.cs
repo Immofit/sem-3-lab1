@@ -135,7 +135,7 @@ namespace ConsoleApp
             Console.WriteLine("2 - Удалить машину");
             Console.WriteLine("3 - Показать все машины");
             Console.WriteLine("4 - Изменить машину");
-            Console.WriteLine("5 - Группировка машин по марке");
+            Console.WriteLine("5 - Группировка машин по бренду");
             Console.WriteLine("6 - Показать машины определенного года");
             Console.WriteLine("7 - Показать машины по цвету");
             Console.WriteLine("8 - Секретные функции");
@@ -147,7 +147,7 @@ namespace ConsoleApp
         /// </summary>
         static void AddCar()
         {
-            string brand = ReadNonEmptyString("Введите марку машины: ", "Бренд не может быть пустым.");
+            string brand = ReadNonEmptyString("Введите бренд машины: ", "Бренд не может быть пустым.");
             string model = ReadNonEmptyString("Введите модель машины: ", "Модель не может быть пустой.");
             string color = ReadNonEmptyString("Введите цвет машины: ", "Цвет не может быть пустым.");
             int year = ReadYear("Введите год выпуска машины: ");
@@ -216,7 +216,7 @@ namespace ConsoleApp
                 return;
             }
 
-            string brand = ReadNonEmptyString("Введите новую марку машины: ", "Бренд не может быть пустым.");
+            string brand = ReadNonEmptyString("Введите новый бренд машины: ", "Бренд не может быть пустым.");
             string model = ReadNonEmptyString("Введите новую модель машины: ", "Модель не может быть пустой.");
             string color = ReadNonEmptyString("Введите новый цвет машины: ", "Цвет не может быть пустым.");
             int year = ReadYear("Введите новый год выпуска машины: ");
@@ -231,7 +231,7 @@ namespace ConsoleApp
         }
 
         /// <summary>
-        /// Выводит машины, сгруппированные по бренду (марке).
+        /// Выводит машины, сгруппированные по бренду .
         /// </summary>
         static void GroupBrand()
         {

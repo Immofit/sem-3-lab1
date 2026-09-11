@@ -35,15 +35,7 @@ namespace Presentation.WinForms
                 return;
             }
 
-            
             DialogResult = DialogResult.OK;
-            Tag = new
-            {
-                Brand = brandBox.Text,
-                Model = modelBox.Text,
-                Color = colorBox.Text,
-                Year = (int)yearBox.Value,
-            };
             Close();
         }
 

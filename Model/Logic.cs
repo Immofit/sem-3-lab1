@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Text;
 
 namespace Model
@@ -21,34 +20,27 @@ namespace Model
         /// <summary>
         /// Создаёт машину со случайным пробегом и добавляет её в список.
         /// </summary>
-        /// <param name="brand">Марка автомобиля.</param>
+        /// <param name="brand">Бренд автомобиля.</param>
         /// <param name="model">Модель автомобиля.</param>
         /// <param name="color">Цвет автомобиля.</param>
         /// <param name="year">Год выпуска.</param>
         /// <returns>Созданный объект машины или null, если данные некорректны.</returns>
         public Car? CreateCar(string brand, string model, string color, int year)
         {
-            if (brand == "" || brand == null)
-            {
-                Console.WriteLine("Бренд не может быть пустым.");
+            if (string.IsNullOrWhiteSpace(brand))
+            { 
                 return null;
             }
-
-            if (model == "" || model == null)
-            {
-                Console.WriteLine("Модель не может быть пустой.");
+            if (string.IsNullOrWhiteSpace(model))
+            { 
                 return null;
             }
-
-            if (color == "" || color == null)
-            {
-                Console.WriteLine("Цвет не может быть пустым.");
+            if (string.IsNullOrWhiteSpace(color))
+            { 
                 return null;
             }
-
             if (year < 1900 || year > DateTime.Now.Year)
-            {
-                Console.WriteLine("Некорректный год выпуска.");
+            { 
                 return null;
             }
 
@@ -112,34 +104,27 @@ namespace Model
         /// Изменяет данные машины по указанному идентификатору.
         /// </summary>
         /// <param name="id">Идентификатор машины.</param>
-        /// <param name="brand">Новая марка.</param>
+        /// <param name="brand">Новый бренд.</param>
         /// <param name="model">Новая модель.</param>
         /// <param name="color">Новый цвет.</param>
         /// <param name="year">Новый год выпуска.</param>
         /// <returns>true, если машина найдена, данные корректны и обновление прошло успешно; иначе false.</returns>
         public bool UpdateCar(int id, string brand, string model, string color, int year)
         {
-            if (brand == "" || brand == null)
+            if (string.IsNullOrWhiteSpace(brand))
             {
-                Console.WriteLine("Бренд не может быть пустым.");
                 return false;
             }
-
-            if (model == "" || model == null)
+            if (string.IsNullOrWhiteSpace(model))
             {
-                Console.WriteLine("Модель не может быть пустой.");
                 return false;
             }
-
-            if (color == "" || color == null)
+            if (string.IsNullOrWhiteSpace(color))
             {
-                Console.WriteLine("Цвет не может быть пустым.");
                 return false;
             }
-
             if (year < 1900 || year > DateTime.Now.Year)
             {
-                Console.WriteLine("Некорректный год выпуска.");
                 return false;
             }
 
@@ -165,7 +150,7 @@ namespace Model
         }
 
         /// <summary>
-        /// Группирует все машины по бренду (марке).
+        /// Группирует все машины по бренду .
         /// </summary>
         /// <returns>Словарь, где ключ — бренд, значение — список машин этого бренда.</returns>
         public Dictionary<string, List<Car>> CarsBrand()

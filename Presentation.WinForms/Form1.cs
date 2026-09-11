@@ -1,7 +1,6 @@
 using Microsoft.VisualBasic;
 using Model;
 using System.ComponentModel;
-using System.Drawing;
 
 namespace Presentation.WinForms
 {
@@ -213,7 +212,7 @@ namespace Presentation.WinForms
 
             if (string.IsNullOrWhiteSpace(input))
             {
-                MessageBox.Show("Цвет не может быть пустым.");
+                MessageBox.Show("Цвет не может быть пустым."); 
                 return;
             }
 

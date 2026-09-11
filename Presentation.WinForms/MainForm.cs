@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace Presentation.WinForms
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
 
         Logic logic = new Logic();
@@ -16,7 +16,7 @@ namespace Presentation.WinForms
         /// <summary>
         /// Инициализирует форму и заполняет её тестовыми данными о машинах.
         /// </summary>
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
 

@@ -1,24 +1,23 @@
-﻿using System;
+using Model;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+using DataAccessLayer;
 
 namespace Model
 {
     public class Logic
     {
-        private List<Car> cars;
-        private int nextId;
+        /// <summary>
+        /// Репозиторий, в котором хранятся машины. Сейчас работает через Entity Framework.
+        /// Чтобы переключиться на Dapper, раскомментируйте вторую строку и закомментируйте первую.
+        /// </summary>
+        private IRepository<Car> repository = new EntityRepository<Car>(new AppDbContext<Car>());
+        //private IRepository<Car> repository = new DapperRepository<Car>(DbSettings.ConnectionString);
+
         private static Random random = new Random();
 
-        public Logic()
-        {
-            cars = new List<Car>();
-            nextId = 1;
-        }
-
         /// <summary>
-        /// Создаёт машину со случайным пробегом и добавляет её в список.
+        /// Создаёт машину со случайным пробегом и добавляет её в репозиторий.
         /// </summary>
         /// <param name="brand">Бренд автомобиля.</param>
         /// <param name="model">Модель автомобиля.</param>
@@ -28,25 +27,26 @@ namespace Model
         public Car? CreateCar(string brand, string model, string color, int year)
         {
             if (string.IsNullOrWhiteSpace(brand))
-            { 
+            {
                 return null;
             }
             if (string.IsNullOrWhiteSpace(model))
-            { 
+            {
                 return null;
             }
             if (string.IsNullOrWhiteSpace(color))
-            { 
+            {
                 return null;
             }
             if (year < 1900 || year > DateTime.Now.Year)
-            { 
+            {
                 return null;
             }
 
             int mileage = random.Next(1000, 200000);
-            var car = new Car(nextId++, brand, model, color, year, mileage);
-            cars.Add(car);
+            
+            var car = new Car(0, brand, model, color, year, mileage);
+            repository.Add(car);
             return car;
         }
 
@@ -57,21 +57,7 @@ namespace Model
         /// <returns>true, если машина найдена и удалена; иначе false.</returns>
         public bool DeleteCar(int id)
         {
-            Car? car = null;
-            for (int i = 0; i < cars.Count; i++)
-            {
-                if (cars[i].Id == id)
-                {
-                    car = cars[i];
-                    break;
-                }
-            }
-            if (car != null)
-            {
-                cars.Remove(car);
-                return true;
-            }
-            return false;
+            return repository.Delete(id);
         }
 
         /// <summary>
@@ -80,7 +66,7 @@ namespace Model
         /// <returns>Список всех машин.</returns>
         public List<Car> AllCars()
         {
-            return cars;
+            return repository.ReadAll();
         }
 
         /// <summary>
@@ -90,14 +76,7 @@ namespace Model
         /// <returns>Найденная машина или null, если не найдена.</returns>
         public Car? CarId(int id)
         {
-            for (int i = 0; i < cars.Count; i++)
-            {
-                if (cars[i].Id == id)
-                {
-                    return cars[i];
-                }
-            }
-            return null;
+            return repository.ReadById(id);
         }
 
         /// <summary>
@@ -128,35 +107,27 @@ namespace Model
                 return false;
             }
 
-            Car? car = null;
-            for (int i = 0; i < cars.Count; i++)
+            Car? car = repository.ReadById(id);
+            if (car == null)
             {
-                if (cars[i].Id == id)
-                {
-                    car = cars[i];
-                    break;
-                }
+                return false;
             }
 
-            if (car != null)
-            {
-                car.Brand = brand;
-                car.Model = model;
-                car.Color = color;
-                car.Year = year;
-                return true;
-            }
-            return false;
+            car.Brand = brand;
+            car.Model = model;
+            car.Color = color;
+            car.Year = year;
+            return repository.Update(car);
         }
 
         /// <summary>
-        /// Группирует все машины по бренду .
+        /// Группирует все машины по бренду.
         /// </summary>
         /// <returns>Словарь, где ключ — бренд, значение — список машин этого бренда.</returns>
         public Dictionary<string, List<Car>> CarsBrand()
         {
             var carsByBrand = new Dictionary<string, List<Car>>();
-            foreach (var car in cars)
+            foreach (var car in repository.ReadAll())
             {
                 if (!carsByBrand.ContainsKey(car.Brand))
                 {
@@ -176,11 +147,11 @@ namespace Model
         {
             List<Car> result = new List<Car>();
 
-            for (int i = 0; i < cars.Count; i++)
+            foreach (var car in repository.ReadAll())
             {
-                if (cars[i].Year == year)
+                if (car.Year == year)
                 {
-                    result.Add(cars[i]);
+                    result.Add(car);
                 }
             }
 
@@ -195,13 +166,15 @@ namespace Model
         public List<Car> CarsColor(string color)
         {
             List<Car> result = new List<Car>();
-            for (int i = 0; i < cars.Count; i++)
+
+            foreach (var car in repository.ReadAll())
             {
-                if (cars[i].Color.Equals(color, StringComparison.OrdinalIgnoreCase))
+                if (car.Color.Equals(color, StringComparison.OrdinalIgnoreCase))
                 {
-                    result.Add(cars[i]);
+                    result.Add(car);
                 }
             }
+
             return result;
         }
 
@@ -216,7 +189,7 @@ namespace Model
             if (car != null)
             {
                 car.WindowTinting = true;
-                return true;
+                return repository.Update(car);
             }
             return false;
         }
@@ -233,7 +206,7 @@ namespace Model
             if (car != null && newMileage >= 0 && newMileage < car.Mileage)
             {
                 car.Mileage = newMileage;
-                return true;
+                return repository.Update(car);
             }
             return false;
         }

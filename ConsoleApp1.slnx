@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="BusinessLogic/BusinessLogic.csproj" Id="32a4bc19-5ba0-4bb4-a74d-9a76a7a03b9a" />
+  <Project Path="DataAccessLayer/DataAccessLayer.csproj" Id="a2569091-c7a7-4501-878c-d5ffd974e3fd" />
   <Project Path="Model/Model.csproj" />
   <Project Path="Presentation.Console/Presentation.Console.csproj" />
   <Project Path="Presentation.WinForms/Presentation.WinForms.csproj" />

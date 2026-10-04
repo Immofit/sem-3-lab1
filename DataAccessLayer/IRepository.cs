@@ -8,9 +8,9 @@ namespace DataAccessLayer
     public interface IRepository<T> where T : class, IDomainObject
     {
         void Add(T item);
-        void Delete(int id);
-        IEnumerable<T> ReadAll();
+        bool Delete(int id);
+        List<T> ReadAll();
         T? ReadById(int id);
-        void Update(T item);
+        bool Update(T item);
     }
 }

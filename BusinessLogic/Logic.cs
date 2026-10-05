@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using DataAccessLayer;
 
-namespace Model
+namespace BusinessLogic
 {
     public class Logic
     {
@@ -11,8 +11,8 @@ namespace Model
         /// Репозиторий, в котором хранятся машины. Сейчас работает через Entity Framework.
         /// Чтобы переключиться на Dapper, раскомментируйте вторую строку и закомментируйте первую.
         /// </summary>
-        private IRepository<Car> repository = new EntityRepository<Car>(new AppDbContext<Car>());
-        //private IRepository<Car> repository = new DapperRepository<Car>(DbSettings.ConnectionString);
+        //private IRepository<Car> repository = new EntityRepository<Car>(new AppDbContext<Car>());
+        private IRepository<Car> repository = new DapperRepository<Car>(DbSettings.ConnectionString);
 
         private static Random random = new Random();
 

@@ -1,5 +1,6 @@
 ﻿using System;
-using Model;
+
+using BusinessLogic;
 
 namespace ConsoleApp
 {

@@ -1,7 +1,7 @@
 using Microsoft.VisualBasic;
 using Model;
 using System.ComponentModel;
-
+using BusinessLogic;
 namespace Presentation.WinForms
 {
     public partial class MainForm : Form

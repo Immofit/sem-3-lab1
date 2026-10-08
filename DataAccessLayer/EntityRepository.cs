@@ -40,7 +40,7 @@ namespace DataAccessLayer
         /// <returns>true, если сущность найдена и удалена; иначе false.</returns>
         public bool Delete(int id)
         {
-            T item = context.Items.Find(id);
+            T? item = context.Items.Find(id);
             if (item == null)
             {
                 return false;

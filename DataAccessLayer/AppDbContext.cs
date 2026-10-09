@@ -25,7 +25,7 @@ namespace DataAccessLayer
         }
 
         /// <summary>
-        /// Задаёт имя таблицы: имя класса + "s" (для Car это Cars),
+        /// Задаёт имя таблицы: имя класса + "s" ,
         /// такое же имя использует DapperRepository.
         /// </summary>
         /// <param name="modelBuilder">Построитель модели данных.</param>

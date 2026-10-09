@@ -13,7 +13,7 @@
         public int Id { get; set; }
 
         /// <summary>
-        /// Бренд автомобиля (например, Toyota, BMW).
+        /// Бренд автомобиля .
         /// </summary>
         public string Brand { get; set; } = "";
 

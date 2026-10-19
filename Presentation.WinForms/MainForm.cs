@@ -6,7 +6,6 @@ namespace Presentation.WinForms
 {
     public partial class MainForm : Form
     {
-
         Logic logic;
         private BindingList<Car> carsBinding = new BindingList<Car>();
         private bool secretMode = false;
@@ -41,7 +40,6 @@ namespace Presentation.WinForms
             }
         }
 
-
         /// <summary>
         /// Обновляет таблицу, заново получая полный список машин из Logic.
         /// </summary>
@@ -50,8 +48,6 @@ namespace Presentation.WinForms
             carsBinding = new BindingList<Car>(logic.AllCars());
             Table.DataSource = carsBinding;
         }
-
-
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Получить все машины" — обновляет таблицу.
@@ -62,8 +58,6 @@ namespace Presentation.WinForms
         {
             RefreshTable();
         }
-
-
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Создать машину" — открывает форму ввода данных
@@ -82,27 +76,23 @@ namespace Presentation.WinForms
                 {
                     var values = addForm.GetValues();
 
-                    if (values.year < 1900 || values.year > DateTime.Now.Year)
+                    if (!CarValidator.IsValidYear(values.year))
                     {
                         MessageBox.Show("Год должен быть не меньше 1900 и не больше текущего.", "Ошибка ввода");
                         return;
                     }
 
-                    try
+                    var car = logic.CreateCar(values.brand, values.model, values.color, values.year);
+                    if (car == null)
                     {
-                        logic.CreateCar(values.brand, values.model, values.color, values.year);
-                        RefreshTable();
+                        MessageBox.Show("Не удалось создать машину. Проверьте введённые данные.", "Ошибка ввода");
+                        return;
                     }
-                    catch (ArgumentException ex)
-                    {
-                        MessageBox.Show(ex.Message, "Ошибка ввода");
-                    }
+
+                    RefreshTable();
                 }
             }
         }
-
-
-
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Удалить машину" — удаляет выбранную в таблице машину.
@@ -123,9 +113,6 @@ namespace Presentation.WinForms
             logic.DeleteCar(selectedCar.Id);
             RefreshTable();
         }
-
-
-
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Изменить машину" — открывает форму редактирования
@@ -150,27 +137,23 @@ namespace Presentation.WinForms
                 {
                     var values = addForm.GetValues();
 
-                    if (values.year < 1900 || values.year > DateTime.Now.Year)
+                    if (!CarValidator.IsValidYear(values.year))
                     {
                         MessageBox.Show("Год должен быть не меньше 1900 и не больше текущего.", "Ошибка ввода");
                         return;
                     }
 
-                    try
+                    bool updated = logic.UpdateCar(selectedCar.Id, values.brand, values.model, values.color, values.year);
+                    if (!updated)
                     {
-                        logic.UpdateCar(selectedCar.Id, values.brand, values.model, values.color, values.year);
-                        RefreshTable();
+                        MessageBox.Show("Не удалось изменить машину. Проверьте данные: возможно, машина уже удалена.", "Ошибка ввода");
+                        return;
                     }
-                    catch (ArgumentException ex)
-                    {
-                        MessageBox.Show(ex.Message, "Ошибка ввода");
-                    }
+
+                    RefreshTable();
                 }
             }
         }
-
-
-
 
         /// <summary>
         /// Обрабатывает нажатие кнопки поиска машин по году — запрашивает год у пользователя
@@ -182,7 +165,7 @@ namespace Presentation.WinForms
         {
             string input = Interaction.InputBox("Введите год:", "Поиск машин", "");
 
-            if (!int.TryParse(input, out int year) || year < 1900 || year > DateTime.Now.Year)
+            if (!int.TryParse(input, out int year) || !CarValidator.IsValidYear(year))
             {
                 MessageBox.Show("Введите корректный год.");
                 return;
@@ -199,8 +182,6 @@ namespace Presentation.WinForms
             carsBinding = new BindingList<Car>(result);
             Table.DataSource = carsBinding;
         }
-
-
 
         /// <summary>
         /// Обрабатывает нажатие кнопки поиска машин по цвету — запрашивает цвет у пользователя
@@ -228,10 +209,6 @@ namespace Presentation.WinForms
             carsBinding = new BindingList<Car>(result);
             Table.DataSource = carsBinding;
         }
-
-
-
-
 
         /// <summary>
         /// Переключает видимость секретных функций (тонировка, скрутка пробега)
@@ -264,8 +241,6 @@ namespace Presentation.WinForms
             }
         }
 
-
-
         /// <summary>
         /// Обрабатывает нажатие кнопки "Скрутить пробег" — запрашивает у пользователя
         /// новое значение пробега и применяет его к выбранной в таблице машине через Logic.
@@ -297,7 +272,6 @@ namespace Presentation.WinForms
 
             RefreshTable();
         }
-
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Поставить тонировку" — устанавливает тонировку

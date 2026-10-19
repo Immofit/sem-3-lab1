@@ -10,10 +10,21 @@ namespace DataAccessLayer
     /// <typeparam name="T">Тип сущности, для которой создаётся таблица.</typeparam>
     public class AppDbContext<T> : DbContext where T : class, IDomainObject
     {
+        private string connectionString;
+
         /// <summary>
         /// Таблица сущностей.
         /// </summary>
         public DbSet<T> Items { get; set; }
+
+        /// <summary>
+        /// Создаёт контекст для указанной строки подключения.
+        /// </summary>
+        /// <param name="connectionString">Строка подключения к базе данных.</param>
+        public AppDbContext(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
 
         /// <summary>
         /// Настраивает подключение к базе данных.
@@ -21,7 +32,7 @@ namespace DataAccessLayer
         /// <param name="optionsBuilder">Построитель настроек контекста.</param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(DbSettings.ConnectionString);
+            optionsBuilder.UseSqlServer(connectionString);
         }
 
         /// <summary>

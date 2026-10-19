@@ -101,7 +101,7 @@ namespace ConsoleApp
         {
             int year = ReadInt(prompt);
 
-            while (year < 1900 || year > DateTime.Now.Year)
+            while (!CarValidator.IsValidYear(year))
             {
                 Console.WriteLine("Некорректный год выпуска.");
                 year = ReadInt(prompt);
@@ -355,11 +355,15 @@ namespace ConsoleApp
             AllCars();
             int id = ReadInt("Введите ID машины : ");
 
-            bool added = logic.AddTinting(id);
-            if (added)
+            var car = logic.CarId(id);
+            if (car == null)
+                Console.WriteLine($"Машина с ID {id} не найдена.");
+            else if (car.WindowTinting)
+                Console.WriteLine($"На машине с ID {id} тонировка уже установлена.");
+            else if (logic.AddTinting(id))
                 Console.WriteLine($"Тонировка добавлена для машины с ID {id}.");
             else
-                Console.WriteLine($"Машина с ID {id} не найдена.");
+                Console.WriteLine("Не удалось добавить тонировку.");
 
             Console.WriteLine("Нажмите любую клавишу для продолжения ");
             Console.ReadKey();

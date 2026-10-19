@@ -34,25 +34,13 @@ namespace BusinessLogic
         /// <returns>Созданный объект машины или null, если данные некорректны.</returns>
         public Car? CreateCar(string brand, string model, string color, int year)
         {
-            if (string.IsNullOrWhiteSpace(brand))
-            {
-                return null;
-            }
-            if (string.IsNullOrWhiteSpace(model))
-            {
-                return null;
-            }
-            if (string.IsNullOrWhiteSpace(color))
-            {
-                return null;
-            }
-            if (year < 1900 || year > DateTime.Now.Year)
+            if (!CarValidator.IsValid(brand, model, color, year))
             {
                 return null;
             }
 
             int mileage = random.Next(1000, 200000);
-            
+
             var car = new Car(0, brand, model, color, year, mileage);
             repository.Add(car);
             return car;
@@ -98,19 +86,7 @@ namespace BusinessLogic
         /// <returns>true, если машина найдена, данные корректны и обновление прошло успешно; иначе false.</returns>
         public bool UpdateCar(int id, string brand, string model, string color, int year)
         {
-            if (string.IsNullOrWhiteSpace(brand))
-            {
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(model))
-            {
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(color))
-            {
-                return false;
-            }
-            if (year < 1900 || year > DateTime.Now.Year)
+            if (!CarValidator.IsValid(brand, model, color, year))
             {
                 return false;
             }
@@ -190,16 +166,17 @@ namespace BusinessLogic
         /// Включает тонировку окон у машины с указанным идентификатором.
         /// </summary>
         /// <param name="id">Идентификатор машины.</param>
-        /// <returns>true, если машина найдена и тонировка добавлена; иначе false.</returns>
+        /// <returns>true, если тонировка добавлена; false, если машина не найдена или тонировка уже установлена.</returns>
         public bool AddTinting(int id)
         {
             var car = CarId(id);
-            if (car != null)
+            if (car == null || car.WindowTinting)
             {
-                car.WindowTinting = true;
-                return repository.Update(car);
+                return false;
             }
-            return false;
+
+            car.WindowTinting = true;
+            return repository.Update(car);
         }
 
         /// <summary>

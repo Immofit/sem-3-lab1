@@ -7,18 +7,20 @@ namespace Presentation.WinForms
     public partial class MainForm : Form
     {
 
-        Logic logic = new Logic();
+        Logic logic;
         private BindingList<Car> carsBinding = new BindingList<Car>();
         private bool secretMode = false;
 
 
 
         /// <summary>
-        /// Инициализирует форму и заполняет её тестовыми данными о машинах.
+        /// Инициализирует форму. Logic приходит снаружи (создана через Ninject).
         /// </summary>
-        public MainForm()
+        /// <param name="logic">Бизнес-логика приложения.</param>
+        public MainForm(Logic logic)
         {
             InitializeComponent();
+            this.logic = logic;
 
             Table.ColumnHeaderMouseClick += Table_ColumnHeaderMouseClick;
         }

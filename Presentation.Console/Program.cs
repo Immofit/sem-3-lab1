@@ -1,13 +1,14 @@
-﻿using System;
-
-using BusinessLogic;
+﻿using BusinessLogic;
+using Ninject;
+using System;
 
 namespace ConsoleApp
 {
     class Program
     {
-        // Создаём один объект Logic на всё приложение — через него работаем со всеми машинами
-        static Logic logic = new Logic();
+        // Контейнер сам создаёт Logic и внедряет в него репозиторий
+        static IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
+        static Logic logic = ninjectKernel.Get<Logic>();
 
         /// <summary>
         /// Точка входа в программу. Показывает меню и обрабатывает выбор пользователя в цикле.

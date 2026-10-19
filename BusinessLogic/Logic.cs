@@ -8,13 +8,21 @@ namespace BusinessLogic
     public class Logic
     {
         /// <summary>
-        /// Репозиторий, в котором хранятся машины. Сейчас работает через Entity Framework.
-        /// Чтобы переключиться на Dapper, раскомментируйте вторую строку и закомментируйте первую.
+        /// Репозиторий, в котором хранятся машины. Конкретная реализация (EF или Dapper)
+        /// не создаётся здесь, а внедряется через конструктор средствами Ninject.
         /// </summary>
-        //private IRepository<Car> repository = new EntityRepository<Car>(new AppDbContext<Car>());
-        private IRepository<Car> repository = new DapperRepository<Car>(DbSettings.ConnectionString);
+        private IRepository<Car> repository;
 
         private static Random random = new Random();
+
+        /// <summary>
+        /// Создаёт бизнес-логику, зависящую только от абстракции IRepository.
+        /// </summary>
+        /// <param name="repository">Репозиторий для хранения машин.</param>
+        public Logic(IRepository<Car> repository)
+        {
+            this.repository = repository;
+        }
 
         /// <summary>
         /// Создаёт машину со случайным пробегом и добавляет её в репозиторий.

@@ -8,17 +8,17 @@ namespace BusinessLogic
     public class Logic
     {
         /// <summary>
-        /// Репозиторий, в котором хранятся машины. Конкретная реализация (EF или Dapper)
-        /// не создаётся здесь, а внедряется через конструктор средствами Ninject.
+        /// Репозиторий, в котором хранятся машины. Сейчас работает через Entity Framework.
+        /// Чтобы переключиться на Dapper, раскомментируйте вторую строку и закомментируйте первую.
         /// </summary>
         private IRepository<Car> repository;
 
         private static Random random = new Random();
 
         /// <summary>
-        /// Создаёт бизнес-логику, зависящую только от абстракции IRepository.
+        /// Создаёт бизнес-логику с указанным репозиторием.
         /// </summary>
-        /// <param name="repository">Репозиторий для хранения машин.</param>
+        /// <param name="repository">Репозиторий, через который ведётся работа с машинами.</param>
         public Logic(IRepository<Car> repository)
         {
             this.repository = repository;
@@ -34,7 +34,19 @@ namespace BusinessLogic
         /// <returns>Созданный объект машины или null, если данные некорректны.</returns>
         public Car? CreateCar(string brand, string model, string color, int year)
         {
-            if (!CarValidator.IsValid(brand, model, color, year))
+            if (string.IsNullOrWhiteSpace(brand))
+            {
+                return null;
+            }
+            if (string.IsNullOrWhiteSpace(model))
+            {
+                return null;
+            }
+            if (string.IsNullOrWhiteSpace(color))
+            {
+                return null;
+            }
+            if (year < 1900 || year > DateTime.Now.Year)
             {
                 return null;
             }
@@ -86,7 +98,19 @@ namespace BusinessLogic
         /// <returns>true, если машина найдена, данные корректны и обновление прошло успешно; иначе false.</returns>
         public bool UpdateCar(int id, string brand, string model, string color, int year)
         {
-            if (!CarValidator.IsValid(brand, model, color, year))
+            if (string.IsNullOrWhiteSpace(brand))
+            {
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(model))
+            {
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(color))
+            {
+                return false;
+            }
+            if (year < 1900 || year > DateTime.Now.Year)
             {
                 return false;
             }
@@ -166,11 +190,15 @@ namespace BusinessLogic
         /// Включает тонировку окон у машины с указанным идентификатором.
         /// </summary>
         /// <param name="id">Идентификатор машины.</param>
-        /// <returns>true, если тонировка добавлена; false, если машина не найдена или тонировка уже установлена.</returns>
+        /// <returns>true, если машина найдена и тонировка добавлена; false, если машина не найдена или тонировка уже стоит.</returns>
         public bool AddTinting(int id)
         {
             var car = CarId(id);
-            if (car == null || car.WindowTinting)
+            if (car == null)
+            {
+                return false;
+            }
+            if (car.WindowTinting)
             {
                 return false;
             }

@@ -1,12 +1,13 @@
-﻿using BusinessLogic;
+﻿using System;
+
+using BusinessLogic;
 using Ninject;
-using System;
 
 namespace ConsoleApp
 {
     class Program
     {
-        // Контейнер сам создаёт Logic и внедряет в него репозиторий
+        
         static IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
         static Logic logic = ninjectKernel.Get<Logic>();
 
@@ -101,7 +102,7 @@ namespace ConsoleApp
         {
             int year = ReadInt(prompt);
 
-            while (!CarValidator.IsValidYear(year))
+            while (year < 1900 || year > DateTime.Now.Year)
             {
                 Console.WriteLine("Некорректный год выпуска.");
                 year = ReadInt(prompt);
@@ -357,13 +358,17 @@ namespace ConsoleApp
 
             var car = logic.CarId(id);
             if (car == null)
+            {
                 Console.WriteLine($"Машина с ID {id} не найдена.");
-            else if (car.WindowTinting)
-                Console.WriteLine($"На машине с ID {id} тонировка уже установлена.");
+            }
             else if (logic.AddTinting(id))
+            {
                 Console.WriteLine($"Тонировка добавлена для машины с ID {id}.");
+            }
             else
-                Console.WriteLine("Не удалось добавить тонировку.");
+            {
+                Console.WriteLine("Тонировка уже установлена на эту машину.");
+            }
 
             Console.WriteLine("Нажмите любую клавишу для продолжения ");
             Console.ReadKey();

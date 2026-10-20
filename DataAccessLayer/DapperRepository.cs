@@ -10,7 +10,8 @@ namespace DataAccessLayer
 {
     /// <summary>
     /// Репозиторий, который работает с базой данных через Dapper (обычные SQL-запросы).
-    /// Отвечает только за CRUD. Создание базы и таблицы вынесено в IDatabaseInitializer.
+    /// Имя таблицы = имя класса + "s".
+    /// Dapper сам не создаёт ни базу, ни таблицу, поэтому репозиторий делает это сам.
     /// </summary>
     /// <typeparam name="T">Тип сущности.</typeparam>
     public class DapperRepository<T> : IRepository<T> where T : class, IDomainObject
@@ -20,17 +21,87 @@ namespace DataAccessLayer
         private List<string> columns;
 
         /// <summary>
-        /// Создаёт репозиторий и просит инициализатор подготовить базу и таблицу.
+        /// Создаёт репозиторий, определяет имя таблицы и список колонок (все свойства, кроме Id),
+        /// затем создаёт базу данных и таблицу, если их ещё нет.
         /// </summary>
         /// <param name="connectionString">Строка подключения к базе данных.</param>
-        /// <param name="initializer">Инициализатор, создающий базу и таблицу.</param>
-        public DapperRepository(string connectionString, IDatabaseInitializer<T> initializer)
+        public DapperRepository(string connectionString)
         {
             this.connectionString = connectionString;
-            tableName = TableInfo<T>.TableName;
-            columns = TableInfo<T>.Columns.Select(property => property.Name).ToList();
+            tableName = typeof(T).Name + "s";
 
-            initializer.Initialize();
+            columns = new List<string>();
+            foreach (PropertyInfo property in typeof(T).GetProperties())
+            {
+                if (property.Name != "Id")
+                {
+                    columns.Add(property.Name);
+                }
+            }
+
+            EnsureDatabase();
+            EnsureTable();
+        }
+
+        /// <summary>
+        /// Определяет SQL-тип колонки по типу свойства в C#.
+        /// </summary>
+        /// <param name="type">Тип свойства.</param>
+        /// <returns>Название SQL-типа.</returns>
+        private string SqlType(Type type)
+        {
+            if (type == typeof(string))
+            {
+                return "NVARCHAR(MAX)";
+            }
+            if (type == typeof(bool))
+            {
+                return "BIT";
+            }
+            return "INT";
+        }
+
+        /// <summary>
+        /// Создаёт базу данных, если она ещё не существует.
+        /// Подключается к системной базе master, так как нашей базы может ещё не быть.
+        /// </summary>
+        private void EnsureDatabase()
+        {
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connectionString);
+            string databaseName = builder.InitialCatalog;
+            builder.InitialCatalog = "master";
+
+            string sql = "IF DB_ID(N'" + databaseName + "') IS NULL CREATE DATABASE [" + databaseName + "]";
+
+            using (var connection = new SqlConnection(builder.ConnectionString))
+            {
+                connection.Open();
+                connection.Execute(sql);
+            }
+        }
+
+        /// <summary>
+        /// Создаёт таблицу, если она ещё не существует.
+        /// </summary>
+        private void EnsureTable()
+        {
+            string columnsSql = "";
+            foreach (PropertyInfo property in typeof(T).GetProperties())
+            {
+                if (property.Name != "Id")
+                {
+                    columnsSql += ", " + property.Name + " " + SqlType(property.PropertyType);
+                }
+            }
+
+            string sql = "IF OBJECT_ID(N'" + tableName + "', N'U') IS NULL " +
+                "CREATE TABLE " + tableName + " (Id INT IDENTITY(1,1) PRIMARY KEY" + columnsSql + ")";
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                connection.Execute(sql);
+            }
         }
 
         /// <summary>

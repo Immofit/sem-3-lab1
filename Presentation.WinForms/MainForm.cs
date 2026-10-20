@@ -2,24 +2,28 @@ using Microsoft.VisualBasic;
 using Model;
 using System.ComponentModel;
 using BusinessLogic;
+using Ninject;
 namespace Presentation.WinForms
 {
     public partial class MainForm : Form
     {
-        Logic logic;
+
+        // IoC-контейнер сам решает, какой репозиторий (EF или Dapper) подставить в Logic —
+        // смотрите настройку в BusinessLogic/SimpleConfigModule.cs
+        static IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
+
+        Logic logic = ninjectKernel.Get<Logic>();
         private BindingList<Car> carsBinding = new BindingList<Car>();
         private bool secretMode = false;
 
 
 
         /// <summary>
-        /// Инициализирует форму. Logic приходит снаружи (создана через Ninject).
+        /// Инициализирует форму и заполняет её тестовыми данными о машинах.
         /// </summary>
-        /// <param name="logic">Бизнес-логика приложения.</param>
-        public MainForm(Logic logic)
+        public MainForm()
         {
             InitializeComponent();
-            this.logic = logic;
 
             Table.ColumnHeaderMouseClick += Table_ColumnHeaderMouseClick;
         }
@@ -40,6 +44,7 @@ namespace Presentation.WinForms
             }
         }
 
+
         /// <summary>
         /// Обновляет таблицу, заново получая полный список машин из Logic.
         /// </summary>
@@ -48,6 +53,8 @@ namespace Presentation.WinForms
             carsBinding = new BindingList<Car>(logic.AllCars());
             Table.DataSource = carsBinding;
         }
+
+
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Получить все машины" — обновляет таблицу.
@@ -58,6 +65,8 @@ namespace Presentation.WinForms
         {
             RefreshTable();
         }
+
+
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Создать машину" — открывает форму ввода данных
@@ -76,23 +85,27 @@ namespace Presentation.WinForms
                 {
                     var values = addForm.GetValues();
 
-                    if (!CarValidator.IsValidYear(values.year))
+                    if (values.year < 1900 || values.year > DateTime.Now.Year)
                     {
                         MessageBox.Show("Год должен быть не меньше 1900 и не больше текущего.", "Ошибка ввода");
                         return;
                     }
 
-                    var car = logic.CreateCar(values.brand, values.model, values.color, values.year);
-                    if (car == null)
+                    try
                     {
-                        MessageBox.Show("Не удалось создать машину. Проверьте введённые данные.", "Ошибка ввода");
-                        return;
+                        logic.CreateCar(values.brand, values.model, values.color, values.year);
+                        RefreshTable();
                     }
-
-                    RefreshTable();
+                    catch (ArgumentException ex)
+                    {
+                        MessageBox.Show(ex.Message, "Ошибка ввода");
+                    }
                 }
             }
         }
+
+
+
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Удалить машину" — удаляет выбранную в таблице машину.
@@ -113,6 +126,9 @@ namespace Presentation.WinForms
             logic.DeleteCar(selectedCar.Id);
             RefreshTable();
         }
+
+
+
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Изменить машину" — открывает форму редактирования
@@ -137,23 +153,27 @@ namespace Presentation.WinForms
                 {
                     var values = addForm.GetValues();
 
-                    if (!CarValidator.IsValidYear(values.year))
+                    if (values.year < 1900 || values.year > DateTime.Now.Year)
                     {
                         MessageBox.Show("Год должен быть не меньше 1900 и не больше текущего.", "Ошибка ввода");
                         return;
                     }
 
-                    bool updated = logic.UpdateCar(selectedCar.Id, values.brand, values.model, values.color, values.year);
-                    if (!updated)
+                    try
                     {
-                        MessageBox.Show("Не удалось изменить машину. Проверьте данные: возможно, машина уже удалена.", "Ошибка ввода");
-                        return;
+                        logic.UpdateCar(selectedCar.Id, values.brand, values.model, values.color, values.year);
+                        RefreshTable();
                     }
-
-                    RefreshTable();
+                    catch (ArgumentException ex)
+                    {
+                        MessageBox.Show(ex.Message, "Ошибка ввода");
+                    }
                 }
             }
         }
+
+
+
 
         /// <summary>
         /// Обрабатывает нажатие кнопки поиска машин по году — запрашивает год у пользователя
@@ -165,7 +185,7 @@ namespace Presentation.WinForms
         {
             string input = Interaction.InputBox("Введите год:", "Поиск машин", "");
 
-            if (!int.TryParse(input, out int year) || !CarValidator.IsValidYear(year))
+            if (!int.TryParse(input, out int year) || year < 1900 || year > DateTime.Now.Year)
             {
                 MessageBox.Show("Введите корректный год.");
                 return;
@@ -183,6 +203,8 @@ namespace Presentation.WinForms
             Table.DataSource = carsBinding;
         }
 
+
+
         /// <summary>
         /// Обрабатывает нажатие кнопки поиска машин по цвету — запрашивает цвет у пользователя
         /// и отображает только машины этого цвета.
@@ -195,7 +217,7 @@ namespace Presentation.WinForms
 
             if (string.IsNullOrWhiteSpace(input))
             {
-                MessageBox.Show("Цвет не может быть пустым."); 
+                MessageBox.Show("Цвет не может быть пустым.");
                 return;
             }
 
@@ -209,6 +231,10 @@ namespace Presentation.WinForms
             carsBinding = new BindingList<Car>(result);
             Table.DataSource = carsBinding;
         }
+
+
+
+
 
         /// <summary>
         /// Переключает видимость секретных функций (тонировка, скрутка пробега)
@@ -241,6 +267,8 @@ namespace Presentation.WinForms
             }
         }
 
+
+
         /// <summary>
         /// Обрабатывает нажатие кнопки "Скрутить пробег" — запрашивает у пользователя
         /// новое значение пробега и применяет его к выбранной в таблице машине через Logic.
@@ -272,6 +300,7 @@ namespace Presentation.WinForms
 
             RefreshTable();
         }
+
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Поставить тонировку" — устанавливает тонировку

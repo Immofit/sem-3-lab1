@@ -1,38 +1,35 @@
-﻿using DataAccessLayer;
+using DataAccessLayer;
 using Model;
 using Ninject.Modules;
 
 namespace BusinessLogic
 {
     /// <summary>
-    /// Настройка DI-контейнера: говорит Ninject, какие реализации подставлять вместо интерфейсов.
-    /// Чтобы переключиться между EF и Dapper, нужно поменять только этот класс.
+    /// Модуль Ninject. Здесь, и только здесь, прописано, какой конкретный класс
+    /// подставлять вместо интерфейса IRepository. Чтобы переключиться между
+    /// EF и Dapper, меняется только этот файл — ни Logic, ни View не трогаются.
     /// </summary>
     public class SimpleConfigModule : NinjectModule
     {
         /// <summary>
-        /// Регистрирует соответствие «интерфейс -> класс». Репозиторий создаётся один раз (Singleton).
+        /// Регистрирует зависимости: какой класс дать, когда кто-то просит IRepository&lt;Car&gt;.
         /// </summary>
         public override void Load()
         {
-            Bind<IDatabaseInitializer<Car>>()
-                .To<SqlServerInitializer<Car>>()
-                .InSingletonScope()
-                .WithConstructorArgument("connectionString", DbSettings.ConnectionString);
+            // Выбор репозитория меняем только здесь;
+            string selected = "EF";
 
-            Bind<IRepository<Car>>()
-                .To<DapperRepository<Car>>()
-                .InSingletonScope()
-                .WithConstructorArgument("connectionString", DbSettings.ConnectionString);
-
-            //Bind<AppDbContext<Car>>()
-            //    .ToSelf()
-            //    .InSingletonScope()
-            //    .WithConstructorArgument("connectionString", DbSettings.ConnectionString);
-            //
-            //Bind<IRepository<Car>>()
-            //    .To<EntityRepository<Car>>()
-            //    .InSingletonScope();
+            if (selected == "EF")
+            {
+                
+                Bind<IRepository<Car>>().To<EntityRepository<Car>>().InSingletonScope();
+            }
+            else
+            {
+                
+                Bind<IRepository<Car>>().To<DapperRepository<Car>>().InSingletonScope()
+                    .WithConstructorArgument("connectionString", DbSettings.ConnectionString);
+            }
         }
     }
 }

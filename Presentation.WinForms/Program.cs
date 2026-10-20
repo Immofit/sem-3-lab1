@@ -1,22 +1,17 @@
-using BusinessLogic;
-using Ninject;
-
 namespace Presentation.WinForms
 {
     internal static class Program
     {
         /// <summary>
-        ///  Точка входа. Создаёт Logic через DI-контейнер и передаёт её в главную форму.
+        ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-
-            IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
-            Logic logic = ninjectKernel.Get<Logic>();
-
-            Application.Run(new MainForm(logic));
+            Application.Run(new MainForm());
         }
     }
 }

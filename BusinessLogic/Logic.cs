@@ -11,10 +11,18 @@ namespace BusinessLogic
         /// Репозиторий, в котором хранятся машины. Сейчас работает через Entity Framework.
         /// Чтобы переключиться на Dapper, раскомментируйте вторую строку и закомментируйте первую.
         /// </summary>
-        //private IRepository<Car> repository = new EntityRepository<Car>(new AppDbContext<Car>());
-        private IRepository<Car> repository = new DapperRepository<Car>(DbSettings.ConnectionString);
+        private IRepository<Car> repository;
 
         private static Random random = new Random();
+
+        /// <summary>
+        /// Создаёт бизнес-логику с указанным репозиторием.
+        /// </summary>
+        /// <param name="repository">Репозиторий, через который ведётся работа с машинами.</param>
+        public Logic(IRepository<Car> repository)
+        {
+            this.repository = repository;
+        }
 
         /// <summary>
         /// Создаёт машину со случайным пробегом и добавляет её в репозиторий.
@@ -44,7 +52,7 @@ namespace BusinessLogic
             }
 
             int mileage = random.Next(1000, 200000);
-            
+
             var car = new Car(0, brand, model, color, year, mileage);
             repository.Add(car);
             return car;
@@ -182,16 +190,21 @@ namespace BusinessLogic
         /// Включает тонировку окон у машины с указанным идентификатором.
         /// </summary>
         /// <param name="id">Идентификатор машины.</param>
-        /// <returns>true, если машина найдена и тонировка добавлена; иначе false.</returns>
+        /// <returns>true, если машина найдена и тонировка добавлена; false, если машина не найдена или тонировка уже стоит.</returns>
         public bool AddTinting(int id)
         {
             var car = CarId(id);
-            if (car != null)
+            if (car == null)
             {
-                car.WindowTinting = true;
-                return repository.Update(car);
+                return false;
             }
-            return false;
+            if (car.WindowTinting)
+            {
+                return false;
+            }
+
+            car.WindowTinting = true;
+            return repository.Update(car);
         }
 
         /// <summary>

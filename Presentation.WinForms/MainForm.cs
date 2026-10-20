@@ -2,12 +2,17 @@ using Microsoft.VisualBasic;
 using Model;
 using System.ComponentModel;
 using BusinessLogic;
+using Ninject;
 namespace Presentation.WinForms
 {
     public partial class MainForm : Form
     {
 
-        Logic logic = new Logic();
+        // IoC-контейнер сам решает, какой репозиторий (EF или Dapper) подставить в Logic —
+        // смотрите настройку в BusinessLogic/SimpleConfigModule.cs
+        static IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
+
+        Logic logic = ninjectKernel.Get<Logic>();
         private BindingList<Car> carsBinding = new BindingList<Car>();
         private bool secretMode = false;
 
@@ -212,7 +217,7 @@ namespace Presentation.WinForms
 
             if (string.IsNullOrWhiteSpace(input))
             {
-                MessageBox.Show("Цвет не может быть пустым."); 
+                MessageBox.Show("Цвет не может быть пустым.");
                 return;
             }
 

@@ -74,12 +74,18 @@ namespace DataAccessLayer
         /// Сохраняет изменения сущности в таблице.
         /// </summary>
         /// <param name="item">Сущность с новыми данными.</param>
-        /// <returns>true, если изменения сохранены; иначе false.</returns>
+        /// <returns>true, если сущность найдена и обновлена; иначе false.</returns>
         public bool Update(T item)
         {
+            T? existing = context.Items.Find(item.Id);
+            if (existing == null)
+            {
+                return false;
+            }
+
             context.Items.Update(item);
-            int changedRows = context.SaveChanges();
-            return changedRows > 0;
+            context.SaveChanges();
+            return true;
         }
     }
 }

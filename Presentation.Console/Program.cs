@@ -1,13 +1,15 @@
 ﻿using System;
 
 using BusinessLogic;
+using Ninject;
 
 namespace ConsoleApp
 {
     class Program
     {
-        // Создаём один объект Logic на всё приложение — через него работаем со всеми машинами
-        static Logic logic = new Logic();
+        
+        static IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
+        static Logic logic = ninjectKernel.Get<Logic>();
 
         /// <summary>
         /// Точка входа в программу. Показывает меню и обрабатывает выбор пользователя в цикле.
@@ -354,11 +356,19 @@ namespace ConsoleApp
             AllCars();
             int id = ReadInt("Введите ID машины : ");
 
-            bool added = logic.AddTinting(id);
-            if (added)
-                Console.WriteLine($"Тонировка добавлена для машины с ID {id}.");
-            else
+            var car = logic.CarId(id);
+            if (car == null)
+            {
                 Console.WriteLine($"Машина с ID {id} не найдена.");
+            }
+            else if (logic.AddTinting(id))
+            {
+                Console.WriteLine($"Тонировка добавлена для машины с ID {id}.");
+            }
+            else
+            {
+                Console.WriteLine("Тонировка уже установлена на эту машину.");
+            }
 
             Console.WriteLine("Нажмите любую клавишу для продолжения ");
             Console.ReadKey();

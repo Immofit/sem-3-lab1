@@ -7,10 +7,7 @@ namespace BusinessLogic
 {
     public class Logic
     {
-        /// <summary>
-        /// Репозиторий, в котором хранятся машины. Сейчас работает через Entity Framework.
-        /// Чтобы переключиться на Dapper, раскомментируйте вторую строку и закомментируйте первую.
-        /// </summary>
+        
         private IRepository<Car> repository;
 
         private static Random random = new Random();
@@ -18,7 +15,7 @@ namespace BusinessLogic
         /// <summary>
         /// Создаёт бизнес-логику с указанным репозиторием.
         /// </summary>
-        /// <param name="repository">Репозиторий, через который ведётся работа с машинами.</param>
+        /// <param name="repository">Репозиторий, через который ведётся работа.</param>
         public Logic(IRepository<Car> repository)
         {
             this.repository = repository;

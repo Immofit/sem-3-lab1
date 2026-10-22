@@ -8,8 +8,7 @@ namespace Presentation.WinForms
     public partial class MainForm : Form
     {
 
-        // IoC-контейнер сам решает, какой репозиторий (EF или Dapper) подставить в Logic —
-        // смотрите настройку в BusinessLogic/SimpleConfigModule.cs
+       
         static IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
 
         Logic logic = ninjectKernel.Get<Logic>();

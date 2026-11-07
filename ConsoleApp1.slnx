@@ -4,4 +4,6 @@
   <Project Path="Model/Model.csproj" />
   <Project Path="Presentation.Console/Presentation.Console.csproj" />
   <Project Path="Presentation.WinForms/Presentation.WinForms.csproj" />
+  <Project Path="Presenter/Presenter.csproj" Id="604fd3cd-66e0-4fcd-adc2-b2fd53e1b125" />
+  <Project Path="Shared/Shared.csproj" Id="57c8f559-e4b2-4da0-a18d-1bcb05ab05f0" />
 </Solution>

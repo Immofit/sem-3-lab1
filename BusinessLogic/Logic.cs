@@ -1,24 +1,33 @@
+using DataAccessLayer;
 using Model;
+using Shared;
 using System;
 using System.Collections.Generic;
-using DataAccessLayer;
 
 namespace BusinessLogic
 {
-    public class Logic
+    public class Logic : ILogic
     {
-        
-        private IRepository<Car> repository;
 
+        private IRepository<Car> repository;
         private static Random random = new Random();
 
         /// <summary>
-        /// Создаёт бизнес-логику с указанным репозиторием.
+        /// Возникает после любого успешного изменения списка машин.
         /// </summary>
-        /// <param name="repository">Репозиторий, через который ведётся работа.</param>
+        public event EventHandler? CarsChanged;
+
         public Logic(IRepository<Car> repository)
         {
             this.repository = repository;
+        }
+
+        /// <summary>
+        /// Сообщает подписчикам (Presenter), что данные изменились.
+        /// </summary>
+        private void OnCarsChanged()
+        {
+            CarsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -29,7 +38,7 @@ namespace BusinessLogic
         /// <param name="color">Цвет автомобиля.</param>
         /// <param name="year">Год выпуска.</param>
         /// <returns>Созданный объект машины или null, если данные некорректны.</returns>
-        public Car? CreateCar(string brand, string model, string color, int year)
+        public CarDto? CreateCar(string brand, string model, string color, int year)
         {
             if (string.IsNullOrWhiteSpace(brand))
             {
@@ -52,7 +61,8 @@ namespace BusinessLogic
 
             var car = new Car(0, brand, model, color, year, mileage);
             repository.Add(car);
-            return car;
+            OnCarsChanged();
+            return CarMapper.ToDto(car);
         }
 
         /// <summary>
@@ -62,16 +72,21 @@ namespace BusinessLogic
         /// <returns>true, если машина найдена и удалена; иначе false.</returns>
         public bool DeleteCar(int id)
         {
-            return repository.Delete(id);
+            bool deleted = repository.Delete(id);
+            if (deleted)
+            {
+                OnCarsChanged();
+            }
+            return deleted;
         }
 
         /// <summary>
         /// Возвращает список всех машин.
         /// </summary>
         /// <returns>Список всех машин.</returns>
-        public List<Car> AllCars()
+        public List<CarDto> AllCars()
         {
-            return repository.ReadAll();
+            return repository.ReadAll().Select(CarMapper.ToDto).ToList();
         }
 
         /// <summary>
@@ -79,9 +94,14 @@ namespace BusinessLogic
         /// </summary>
         /// <param name="id">Идентификатор машины.</param>
         /// <returns>Найденная машина или null, если не найдена.</returns>
-        public Car? CarId(int id)
+        public CarDto? CarId(int id)
         {
-            return repository.ReadById(id);
+            Car? car = repository.ReadById(id);
+            if (car == null)
+            {
+                return null;
+            }
+            return CarMapper.ToDto(car);
         }
 
         /// <summary>
@@ -122,23 +142,29 @@ namespace BusinessLogic
             car.Model = model;
             car.Color = color;
             car.Year = year;
-            return repository.Update(car);
+
+            bool updated = repository.Update(car);
+            if (updated)
+            {
+                OnCarsChanged();
+            }
+            return updated;
         }
 
         /// <summary>
         /// Группирует все машины по бренду.
         /// </summary>
         /// <returns>Словарь, где ключ — бренд, значение — список машин этого бренда.</returns>
-        public Dictionary<string, List<Car>> CarsBrand()
+        public Dictionary<string, List<CarDto>> CarsBrand()
         {
-            var carsByBrand = new Dictionary<string, List<Car>>();
+            var carsByBrand = new Dictionary<string, List<CarDto>>();
             foreach (var car in repository.ReadAll())
             {
                 if (!carsByBrand.ContainsKey(car.Brand))
                 {
-                    carsByBrand[car.Brand] = new List<Car>();
+                    carsByBrand[car.Brand] = new List<CarDto>();
                 }
-                carsByBrand[car.Brand].Add(car);
+                carsByBrand[car.Brand].Add(CarMapper.ToDto(car));
             }
             return carsByBrand;
         }
@@ -148,19 +174,12 @@ namespace BusinessLogic
         /// </summary>
         /// <param name="year">Год выпуска для поиска.</param>
         /// <returns>Список машин с указанным годом выпуска.</returns>
-        public List<Car> CarsYear(int year)
+        public List<CarDto> CarsYear(int year)
         {
-            List<Car> result = new List<Car>();
-
-            foreach (var car in repository.ReadAll())
-            {
-                if (car.Year == year)
-                {
-                    result.Add(car);
-                }
-            }
-
-            return result;
+            return repository.ReadAll()
+                .Where(car => car.Year == year)
+                .Select(CarMapper.ToDto)
+                .ToList();
         }
 
         /// <summary>
@@ -168,19 +187,12 @@ namespace BusinessLogic
         /// </summary>
         /// <param name="color">Цвет для поиска.</param>
         /// <returns>Список машин с указанным цветом.</returns>
-        public List<Car> CarsColor(string color)
+        public List<CarDto> CarsColor(string color)
         {
-            List<Car> result = new List<Car>();
-
-            foreach (var car in repository.ReadAll())
-            {
-                if (car.Color.Equals(color, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Add(car);
-                }
-            }
-
-            return result;
+            return repository.ReadAll()
+                .Where(car => car.Color.Equals(color, StringComparison.OrdinalIgnoreCase))
+                .Select(CarMapper.ToDto)
+                .ToList();
         }
 
         /// <summary>
@@ -190,18 +202,19 @@ namespace BusinessLogic
         /// <returns>true, если машина найдена и тонировка добавлена; false, если машина не найдена или тонировка уже стоит.</returns>
         public bool AddTinting(int id)
         {
-            var car = CarId(id);
-            if (car == null)
-            {
-                return false;
-            }
-            if (car.WindowTinting)
+            Car? car = repository.ReadById(id);
+            if (car == null || car.WindowTinting)
             {
                 return false;
             }
 
             car.WindowTinting = true;
-            return repository.Update(car);
+            bool updated = repository.Update(car);
+            if (updated)
+            {
+                OnCarsChanged();
+            }
+            return updated;
         }
 
         /// <summary>
@@ -212,13 +225,19 @@ namespace BusinessLogic
         /// <returns>true, если машина найдена и пробег успешно скручен; иначе false.</returns>
         public bool RollBackMileage(int id, int newMileage)
         {
-            var car = CarId(id);
-            if (car != null && newMileage >= 0 && newMileage < car.Mileage)
+            Car? car = repository.ReadById(id);
+            if (car == null || newMileage < 0 || newMileage >= car.Mileage)
             {
-                car.Mileage = newMileage;
-                return repository.Update(car);
+                return false;
             }
-            return false;
+
+            car.Mileage = newMileage;
+            bool updated = repository.Update(car);
+            if (updated)
+            {
+                OnCarsChanged();
+            }
+            return updated;
         }
     }
 }

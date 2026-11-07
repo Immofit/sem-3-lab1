@@ -1,3 +1,4 @@
+using BusinessLogic;
 using DataAccessLayer;
 using Model;
 using Ninject.Modules;
@@ -20,6 +21,8 @@ public class SimpleConfigModule : NinjectModule
     {
         // Выбор репозитория меняем только здесь: "EF" или "Dapper"
         string selected = "EF";
+
+        Bind<ILogic>().To<Logic>().InSingletonScope();
 
         if (selected == "EF")
         {

@@ -3,53 +3,75 @@ using System.Collections.Generic;
 
 namespace Shared
 {
-    /// <summary>
-    /// Интерфейс представления. Presenter знает о View только через него.
-    /// События View генерирует, методы показа вызывает Presenter.
-    /// </summary>
     public interface IView
     {
-        // ---------- События View (на них подписан Presenter) ----------
-
-        /// <summary>Пользователь запросил показать все машины.</summary>
+        /// <summary>
+        /// Пользователь просит показать все машины.
+        /// </summary>
         event Action? RefreshRequested;
 
-        /// <summary>Пользователь хочет создать машину (Id в DTO не используется).</summary>
+        /// <summary>
+        /// Пользователь просит создать машину. Заполнены Brand, Model, Color, Year.
+        /// </summary>
         event Action<CarDto>? CreateRequested;
 
-        /// <summary>Пользователь хочет изменить машину (Id берётся из DTO).</summary>
+        /// <summary>
+        /// Пользователь просит изменить машину. Заполнены Id, Brand, Model, Color, Year.
+        /// </summary>
         event Action<CarDto>? UpdateRequested;
 
-        /// <summary>Пользователь хочет удалить машину с указанным Id.</summary>
+        /// <summary>
+        /// Пользователь просит удалить машину с указанным Id.
+        /// </summary>
         event Action<int>? DeleteRequested;
 
-        /// <summary>Пользователь запросил группировку машин по бренду.</summary>
+        /// <summary>
+        /// Пользователь просит сгруппировать машины по бренду.
+        /// </summary>
         event Action? BrandGroupingRequested;
 
-        /// <summary>Пользователь запросил поиск машин по году.</summary>
+        /// <summary>
+        /// Пользователь просит найти машины указанного года.
+        /// </summary>
         event Action<int>? FindByYearRequested;
 
-        /// <summary>Пользователь запросил поиск машин по цвету.</summary>
+        /// <summary>
+        /// Пользователь просит найти машины указанного цвета.
+        /// </summary>
         event Action<string>? FindByColorRequested;
 
-        /// <summary>Пользователь хочет добавить тонировку машине с указанным Id.</summary>
+        /// <summary>
+        /// Пользователь просит добавить тонировку машине с указанным Id.
+        /// </summary>
         event Action<int>? AddTintingRequested;
 
-        /// <summary>Пользователь хочет скрутить пробег: Id машины и новое значение.</summary>
+        /// <summary>
+        /// Пользователь просит скрутить пробег: первый параметр — Id машины, второй — новый пробег.
+        /// </summary>
         event Action<int, int>? RollBackMileageRequested;
 
-        // ---------- Методы отрисовки (их вызывает Presenter) ----------
-
-        /// <summary>Показывает список машин.</summary>
+        /// <summary>
+        /// Показывает список машин.
+        /// </summary>
+        /// <param name="cars">Список машин для отображения.</param>
         void ShowCars(List<CarDto> cars);
 
-        /// <summary>Показывает машины, сгруппированные по бренду.</summary>
+        /// <summary>
+        /// Показывает машины, сгруппированные по бренду.
+        /// </summary>
+        /// <param name="groups">Словарь, где ключ — бренд, значение — список машин этого бренда.</param>
         void ShowCarsByBrand(Dictionary<string, List<CarDto>> groups);
 
-        /// <summary>Показывает пользователю информационное сообщение.</summary>
+        /// <summary>
+        /// Показывает пользователю информационное сообщение.
+        /// </summary>
+        /// <param name="message">Текст сообщения.</param>
         void ShowMessage(string message);
 
-        /// <summary>Показывает пользователю сообщение об ошибке.</summary>
+        /// <summary>
+        /// Показывает пользователю сообщение об ошибке.
+        /// </summary>
+        /// <param name="message">Текст сообщения об ошибке.</param>
         void ShowError(string message);
     }
 }

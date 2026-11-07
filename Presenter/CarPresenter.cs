@@ -1,24 +1,20 @@
-﻿using System;
-using System.Linq;
-using BusinessLogic;
+﻿using BusinessLogic;
 using Shared;
+using System;
+using System.Collections.Generic;
 
 namespace Presenter
 {
-    /// <summary>
-    /// Обслуживает View: подписан на её события, вызывает ILogic,
-    /// слушает события бизнес-логики и перерисовывает View через методы IView.
-    /// </summary>
     public class CarPresenter
     {
         private IView view;
         private ILogic logic;
 
         /// <summary>
-        /// Создаёт Presenter и подписывается на события View и бизнес-логики.
+        /// Связывает представление и бизнес-логику: подписывается на события обеих сторон.
         /// </summary>
-        /// <param name="view">Представление.</param>
-        /// <param name="logic">Бизнес-логика (через интерфейс).</param>
+        /// <param name="view">Представление, которое обслуживает Presenter.</param>
+        /// <param name="logic">Бизнес-логика, с которой работает Presenter.</param>
         public CarPresenter(IView view, ILogic logic)
         {
             this.view = view;
@@ -37,115 +33,130 @@ namespace Presenter
             view.RollBackMileageRequested += OnRollBackMileageRequested;
         }
 
-        /// <summary>Данные изменились в бизнес-логике: перерисовываем список.</summary>
+        /// <summary>
+        /// Данные изменились в бизнес-логике: передаёт в представление обновлённый список машин.
+        /// </summary>
         private void OnCarsChanged(object? sender, EventArgs e)
         {
             view.ShowCars(logic.AllCars());
         }
 
+        /// <summary>
+        /// Передаёт в представление список всех машин.
+        /// </summary>
         private void OnRefreshRequested()
         {
             view.ShowCars(logic.AllCars());
         }
 
+        /// <summary>
+        /// Создаёт машину и сообщает представлению результат.
+        /// </summary>
         private void OnCreateRequested(CarDto dto)
         {
             CarDto? car = logic.CreateCar(dto.Brand, dto.Model, dto.Color, dto.Year);
             if (car == null)
             {
-                view.ShowError("Не удалось создать машину. Поля не должны быть пустыми, год от 1900 до текущего.");
+                view.ShowError("Машина не создана: данные некорректны.");
                 return;
             }
-            view.ShowMessage("Машина создана: " + car);
+            view.ShowMessage("Машина создана.");
         }
 
+        /// <summary>
+        /// Изменяет машину и сообщает представлению результат.
+        /// </summary>
         private void OnUpdateRequested(CarDto dto)
         {
-            if (logic.CarId(dto.Id) == null)
+            if (logic.UpdateCar(dto.Id, dto.Brand, dto.Model, dto.Color, dto.Year))
             {
-                view.ShowError("Машина с ID " + dto.Id + " не найдена.");
-                return;
+                view.ShowMessage("Данные машины изменены.");
             }
-
-            if (!logic.UpdateCar(dto.Id, dto.Brand, dto.Model, dto.Color, dto.Year))
+            else
             {
-                view.ShowError("Не удалось изменить машину. Поля не должны быть пустыми, год от 1900 до текущего.");
-                return;
+                view.ShowError("Данные машины не изменены: машина не найдена или данные некорректны.");
             }
-            view.ShowMessage("Машина с ID " + dto.Id + " обновлена.");
         }
 
+        /// <summary>
+        /// Удаляет машину и сообщает представлению результат.
+        /// </summary>
         private void OnDeleteRequested(int id)
         {
-            if (!logic.DeleteCar(id))
+            if (logic.DeleteCar(id))
             {
-                view.ShowError("Машина с ID " + id + " не найдена.");
-                return;
+                view.ShowMessage("Машина удалена.");
             }
-            view.ShowMessage("Машина с ID " + id + " удалена.");
+            else
+            {
+                view.ShowError("Машина не удалена: не найдена.");
+            }
         }
 
+        /// <summary>
+        /// Передаёт в представление машины, сгруппированные по бренду.
+        /// </summary>
         private void OnBrandGroupingRequested()
         {
             view.ShowCarsByBrand(logic.CarsBrand());
         }
 
+        /// <summary>
+        /// Передаёт в представление машины указанного года или сообщение, что их нет.
+        /// </summary>
         private void OnFindByYearRequested(int year)
         {
-            var cars = logic.CarsYear(year);
+            List<CarDto> cars = logic.CarsYear(year);
             if (cars.Count == 0)
             {
-                view.ShowError("Машин " + year + " года не найдено.");
+                view.ShowMessage("Машин указанного года не найдено.");
                 return;
             }
             view.ShowCars(cars);
         }
 
+        /// <summary>
+        /// Передаёт в представление машины указанного цвета или сообщение, что их нет.
+        /// </summary>
         private void OnFindByColorRequested(string color)
         {
-            var cars = logic.CarsColor(color);
+            List<CarDto> cars = logic.CarsColor(color);
             if (cars.Count == 0)
             {
-                view.ShowError("Машин цвета " + color + " не найдено.");
+                view.ShowMessage("Машин указанного цвета не найдено.");
                 return;
             }
             view.ShowCars(cars);
         }
 
+        /// <summary>
+        /// Добавляет тонировку и сообщает представлению результат.
+        /// </summary>
         private void OnAddTintingRequested(int id)
         {
-            CarDto? car = logic.CarId(id);
-            if (car == null)
-            {
-                view.ShowError("Машина с ID " + id + " не найдена.");
-                return;
-            }
-            if (car.WindowTinting)
-            {
-                view.ShowError("Тонировка уже установлена на эту машину.");
-                return;
-            }
-
             if (logic.AddTinting(id))
             {
-                view.ShowMessage("Тонировка добавлена для машины с ID " + id + ".");
+                view.ShowMessage("Тонировка добавлена.");
+            }
+            else
+            {
+                view.ShowError("Тонировка не добавлена: машина не найдена или тонировка уже стоит.");
             }
         }
 
+        /// <summary>
+        /// Скручивает пробег и сообщает представлению результат.
+        /// </summary>
         private void OnRollBackMileageRequested(int id, int newMileage)
         {
-            if (logic.CarId(id) == null)
+            if (logic.RollBackMileage(id, newMileage))
             {
-                view.ShowError("Машина с ID " + id + " не найдена.");
-                return;
+                view.ShowMessage("Пробег скручен.");
             }
-
-            if (!logic.RollBackMileage(id, newMileage))
+            else
             {
-                view.ShowError("Новый пробег должен быть неотрицательным и меньше текущего.");
-                return;
+                view.ShowError("Пробег не скручен: машина не найдена или значение не меньше текущего.");
             }
-            view.ShowMessage("Пробег машины с ID " + id + " скручен до " + newMileage + " км.");
         }
     }
 }

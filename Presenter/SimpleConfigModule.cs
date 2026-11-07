@@ -1,3 +1,7 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
 using BusinessLogic;
 using DataAccessLayer;
 using Model;
@@ -22,7 +26,6 @@ public class SimpleConfigModule : NinjectModule
         // Выбор репозитория меняем только здесь: "EF" или "Dapper"
         string selected = "EF";
 
-        Bind<ILogic>().To<Logic>().InSingletonScope();
 
         if (selected == "EF")
         {
@@ -37,5 +40,7 @@ public class SimpleConfigModule : NinjectModule
         {
             throw new Exception("Неизвестный репозиторий: " + selected);
         }
+
+        Bind<ILogic>().To<Logic>().InSingletonScope();
     }
 }

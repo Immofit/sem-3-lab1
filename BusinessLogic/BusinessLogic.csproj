@@ -7,10 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Ninject" Version="3.3.6" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
 		<ProjectReference Include="..\Model\Model.csproj" />
 		<ProjectReference Include="..\Shared\Shared.csproj" />

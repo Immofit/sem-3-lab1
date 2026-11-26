@@ -6,65 +6,166 @@ namespace Presentation.WinForms
 {
     public partial class MainForm : Form, IView
     {
+        /// <summary>
+        /// Список машин, привязанный к таблице.
+        /// </summary>
         private BindingList<CarDto> carsBinding = new BindingList<CarDto>();
+
+        /// <summary>
+        /// true, если включён секретный режим (видны кнопки тонировки и скрутки пробега).
+        /// </summary>
         private bool secretMode = false;
 
+        /// <summary>
+        /// Возникает, когда пользователь просит показать все машины.
+        /// </summary>
         public event Action? RefreshRequested;
+
+        /// <summary>
+        /// Возникает, когда пользователь подтвердил создание машины.
+        /// Передаёт введённые бренд, модель, цвет и год.
+        /// </summary>
         public event Action<CarDto>? CreateRequested;
+
+        /// <summary>
+        /// Возникает, когда пользователь подтвердил изменение машины.
+        /// Передаёт Id и новые бренд, модель, цвет и год.
+        /// </summary>
         public event Action<CarDto>? UpdateRequested;
+
+        /// <summary>
+        /// Возникает, когда пользователь просит удалить машину.
+        /// Передаёт Id выбранной машины.
+        /// </summary>
         public event Action<int>? DeleteRequested;
+
+        /// <summary>
+        /// Возникает, когда пользователь просит сгруппировать машины по бренду.
+        /// </summary>
         public event Action? BrandGroupingRequested;
+
+        /// <summary>
+        /// Возникает, когда пользователь просит найти машины по году.
+        /// Передаёт введённый год.
+        /// </summary>
         public event Action<int>? FindByYearRequested;
+
+        /// <summary>
+        /// Возникает, когда пользователь просит найти машины по цвету.
+        /// Передаёт введённый цвет.
+        /// </summary>
         public event Action<string>? FindByColorRequested;
+
+        /// <summary>
+        /// Возникает, когда пользователь просит добавить тонировку. 
+        /// Передаёт Id выбранной машины.
+        /// </summary>
         public event Action<int>? AddTintingRequested;
+
+        /// <summary>
+        /// Возникает, когда пользователь просит скрутить пробег.
+        /// Передаёт Id выбранной машины и новый пробег.
+        /// </summary>
         public event Action<int, int>? RollBackMileageRequested;
 
+        /// <summary>
+        /// Создаёт главную форму: строит элементы из дизайнера и подписывает
+        /// таблицу на щелчок по заголовку столбца.
+        /// </summary>
         public MainForm()
         {
             InitializeComponent();
             Table.ColumnHeaderMouseClick += Table_ColumnHeaderMouseClick;
         }
 
-        // ---------- Методы IView: отрисовка ----------
 
-        /// <summary>Показывает список машин в таблице.</summary>
+
+        /// <summary>
+        /// Показывает список машин в таблице: оборачивает его
+        /// в BindingList и назначает источником данных таблицы.
+        /// </summary>
+        /// <param name="cars">Список машин для отображения.</param>
         public void ShowCars(List<CarDto> cars)
         {
             carsBinding = new BindingList<CarDto>(cars);
             Table.DataSource = carsBinding;
         }
 
-        /// <summary>Показывает машины, отсортированные по бренду (группы идут подряд).</summary>
+        /// <summary>
+        /// Показывает машины в таблице, отсортированные по бренду:
+        /// машины одного бренда идут подряд.
+        /// </summary>
+        /// <param name="groups">Словарь, где ключ — бренд, значение — список машин этого бренда.</param>
         public void ShowCarsByBrand(Dictionary<string, List<CarDto>> groups)
         {
-            ShowCars(groups.OrderBy(group => group.Key).SelectMany(group => group.Value).ToList());
+            List<string> brands = new List<string>(groups.Keys);
+            brands.Sort();
+
+            List<CarDto> sorted = new List<CarDto>();
+            foreach (string brand in brands)
+            {
+                sorted.AddRange(groups[brand]);
+            }
+
+            ShowCars(sorted);
         }
 
+        /// <summary>
+        /// Показывает окно с информационным сообщением.
+        /// </summary>
+        /// <param name="message">Текст сообщения.</param>
         public void ShowMessage(string message)
         {
             MessageBox.Show(message);
         }
 
+        /// <summary>
+        /// Показывает окно с сообщением об ошибке и заголовком «Ошибка».
+        /// </summary>
+        /// <param name="message">Текст сообщения об ошибке.</param>
         public void ShowError(string message)
         {
             MessageBox.Show(message, "Ошибка");
         }
 
-        // ---------- События интерфейса: только передаём запрос Presenter ----------
 
+
+        /// <summary>
+        /// Обрабатывает щелчок по заголовку столбца таблицы: если это столбец с брендом (индекс 1),
+        /// вызывает событие группировки по бренду.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события, в том числе индекс столбца.</param>
         private void Table_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.ColumnIndex == 1)
             {
-                BrandGroupingRequested?.Invoke();
+                if (BrandGroupingRequested != null)
+                {
+                    BrandGroupingRequested();
+                }
             }
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки показа машин: вызывает событие обновления списка.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void GetCars_Click(object sender, EventArgs e)
         {
-            RefreshRequested?.Invoke();
+            if (RefreshRequested != null)
+            {
+                RefreshRequested();
+            }
         }
 
+        /// <summary>
+        /// Открывает форму ввода данных новой машины; если пользователь подтвердил ввод,
+        /// вызывает событие создания с введёнными значениями.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void CreateCar_Click(object sender, EventArgs e)
         {
             using (var addForm = new AddCarForm())
@@ -73,17 +174,27 @@ namespace Presentation.WinForms
                 if (addForm.ShowDialog(this) == DialogResult.OK)
                 {
                     var values = addForm.GetValues();
-                    CreateRequested?.Invoke(new CarDto
+
+                    CarDto car = new CarDto();
+                    car.Brand = values.brand;
+                    car.Model = values.model;
+                    car.Color = values.color;
+                    car.Year = values.year;
+
+                    if (CreateRequested != null)
                     {
-                        Brand = values.brand,
-                        Model = values.model,
-                        Color = values.color,
-                        Year = values.year
-                    });
+                        CreateRequested(car);
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// Берёт машину, выбранную в таблице; если машина не выбрана, показывает ошибку,
+        /// иначе снимает выделение и вызывает событие удаления с её Id.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void DeleteCar_Click(object sender, EventArgs e)
         {
             if (Table.CurrentRow?.DataBoundItem is not CarDto selectedCar)
@@ -95,9 +206,19 @@ namespace Presentation.WinForms
             Table.ClearSelection();
             Table.CurrentCell = null;
 
-            DeleteRequested?.Invoke(selectedCar.Id);
+            if (DeleteRequested != null)
+            {
+                DeleteRequested(selectedCar.Id);
+            }
         }
 
+        /// <summary>
+        /// Берёт машину, выбранную в таблице, открывает форму с полями для новых данных;
+        /// если пользователь подтвердил ввод,
+        /// вызывает событие изменения с Id машины и введёнными значениями.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void UpdateCar_Click(object sender, EventArgs e)
         {
             if (Table.CurrentRow?.DataBoundItem is not CarDto selectedCar)
@@ -112,18 +233,28 @@ namespace Presentation.WinForms
                 if (addForm.ShowDialog(this) == DialogResult.OK)
                 {
                     var values = addForm.GetValues();
-                    UpdateRequested?.Invoke(new CarDto
+
+                    CarDto car = new CarDto();
+                    car.Id = selectedCar.Id;
+                    car.Brand = values.brand;
+                    car.Model = values.model;
+                    car.Color = values.color;
+                    car.Year = values.year;
+
+                    if (UpdateRequested != null)
                     {
-                        Id = selectedCar.Id,
-                        Brand = values.brand,
-                        Model = values.model,
-                        Color = values.color,
-                        Year = values.year
-                    });
+                        UpdateRequested(car);
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// Запрашивает год в окне ввода, проверяет, что введено число,
+        /// и вызывает событие поиска по году.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void CarAge_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Введите год:", "Поиск машин", "");
@@ -134,9 +265,18 @@ namespace Presentation.WinForms
                 return;
             }
 
-            FindByYearRequested?.Invoke(year);
+            if (FindByYearRequested != null)
+            {
+                FindByYearRequested(year);
+            }
         }
 
+        /// <summary>
+        /// Запрашивает цвет в окне ввода, проверяет, что строка не пустая,
+        /// и вызывает событие поиска по цвету.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void ColorCar_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Введите цвет:", "Поиск машин", "");
@@ -147,7 +287,10 @@ namespace Presentation.WinForms
                 return;
             }
 
-            FindByColorRequested?.Invoke(input);
+            if (FindByColorRequested != null)
+            {
+                FindByColorRequested(input);
+            }
         }
 
         /// <summary>
@@ -181,6 +324,13 @@ namespace Presentation.WinForms
             }
         }
 
+        /// <summary>
+        /// Берёт машину, выбранную в таблице,
+        /// запрашивает новый пробег в окне ввода, проверяет, что введено число,
+        /// и вызывает событие скрутки пробега.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void RollBackMileage_Click(object sender, EventArgs e)
         {
             if (Table.CurrentRow?.DataBoundItem is not CarDto selectedCar)
@@ -197,9 +347,17 @@ namespace Presentation.WinForms
                 return;
             }
 
-            RollBackMileageRequested?.Invoke(selectedCar.Id, mileage);
+            if (RollBackMileageRequested != null)
+            {
+                RollBackMileageRequested(selectedCar.Id, mileage);
+            }
         }
 
+        /// <summary>
+        /// Берёт машину, выбранную в таблице, и вызывает событие добавления тонировки с её Id.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void AddTinting_Click(object sender, EventArgs e)
         {
             if (Table.CurrentRow?.DataBoundItem is not CarDto selectedCar)
@@ -208,7 +366,10 @@ namespace Presentation.WinForms
                 return;
             }
 
-            AddTintingRequested?.Invoke(selectedCar.Id);
+            if (AddTintingRequested != null)
+            {
+                AddTintingRequested(selectedCar.Id);
+            }
         }
     }
 }

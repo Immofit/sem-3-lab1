@@ -5,13 +5,17 @@ using System.Collections.Generic;
 
 namespace Presenter
 {
+    /// <summary>
+    /// Presenter для работы с автомобилями: связывает представление <see cref="IView"/>
+    /// и бизнес-логику <see cref="ILogic"/>, подписываясь на события обеих сторон.
+    /// </summary>
     public class CarPresenter
     {
         private IView view;
         private ILogic logic;
 
         /// <summary>
-        /// Связывает представление и бизнес-логику: подписывается на события обеих сторон.
+        /// Создаёт Presenter и подписывает его на события представления и бизнес-логики.
         /// </summary>
         /// <param name="view">Представление, которое обслуживает Presenter.</param>
         /// <param name="logic">Бизнес-логика, с которой работает Presenter.</param>
@@ -34,15 +38,18 @@ namespace Presenter
         }
 
         /// <summary>
-        /// Данные изменились в бизнес-логике: передаёт в представление обновлённый список машин.
+        /// Обрабатывает изменение данных в бизнес-логике: передаёт в представление
+        /// актуальный список всех машин.
         /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void OnCarsChanged(object? sender, EventArgs e)
         {
             view.ShowCars(logic.AllCars());
         }
 
         /// <summary>
-        /// Передаёт в представление список всех машин.
+        /// Обрабатывает запрос на обновление: передаёт в представление список всех машин.
         /// </summary>
         private void OnRefreshRequested()
         {
@@ -50,8 +57,9 @@ namespace Presenter
         }
 
         /// <summary>
-        /// Создаёт машину и сообщает представлению результат.
+        /// Обрабатывает создание машины: вызывает бизнес-логику и сообщает представлению результат.
         /// </summary>
+        /// <param name="dto">Данные создаваемой машины.</param>
         private void OnCreateRequested(CarDto dto)
         {
             CarDto? car = logic.CreateCar(dto.Brand, dto.Model, dto.Color, dto.Year);
@@ -64,8 +72,9 @@ namespace Presenter
         }
 
         /// <summary>
-        /// Изменяет машину и сообщает представлению результат.
+        /// Обрабатывает изменение машины: вызывает бизнес-логику и сообщает представлению результат.
         /// </summary>
+        /// <param name="dto">Данные машины с новыми значениями полей.</param>
         private void OnUpdateRequested(CarDto dto)
         {
             if (logic.UpdateCar(dto.Id, dto.Brand, dto.Model, dto.Color, dto.Year))
@@ -79,8 +88,9 @@ namespace Presenter
         }
 
         /// <summary>
-        /// Удаляет машину и сообщает представлению результат.
+        /// Обрабатывает удаление машины: вызывает бизнес-логику и сообщает представлению результат.
         /// </summary>
+        /// <param name="id">Идентификатор удаляемой машины.</param>
         private void OnDeleteRequested(int id)
         {
             if (logic.DeleteCar(id))
@@ -94,7 +104,8 @@ namespace Presenter
         }
 
         /// <summary>
-        /// Передаёт в представление машины, сгруппированные по бренду.
+        /// Обрабатывает запрос на группировку: передаёт в представление машины,
+        /// сгруппированные по бренду.
         /// </summary>
         private void OnBrandGroupingRequested()
         {
@@ -102,8 +113,10 @@ namespace Presenter
         }
 
         /// <summary>
-        /// Передаёт в представление машины указанного года или сообщение, что их нет.
+        /// Обрабатывает поиск по году: передаёт в представление найденные машины
+        /// или сообщение об их отсутствии.
         /// </summary>
+        /// <param name="year">Год выпуска для поиска.</param>
         private void OnFindByYearRequested(int year)
         {
             List<CarDto> cars = logic.CarsYear(year);
@@ -116,8 +129,10 @@ namespace Presenter
         }
 
         /// <summary>
-        /// Передаёт в представление машины указанного цвета или сообщение, что их нет.
+        /// Обрабатывает поиск по цвету: передаёт в представление найденные машины
+        /// или сообщение об их отсутствии.
         /// </summary>
+        /// <param name="color">Цвет для поиска.</param>
         private void OnFindByColorRequested(string color)
         {
             List<CarDto> cars = logic.CarsColor(color);
@@ -130,8 +145,9 @@ namespace Presenter
         }
 
         /// <summary>
-        /// Добавляет тонировку и сообщает представлению результат.
+        /// Обрабатывает добавление тонировки: вызывает бизнес-логику и сообщает представлению результат.
         /// </summary>
+        /// <param name="id">Идентификатор машины.</param>
         private void OnAddTintingRequested(int id)
         {
             if (logic.AddTinting(id))
@@ -145,8 +161,10 @@ namespace Presenter
         }
 
         /// <summary>
-        /// Скручивает пробег и сообщает представлению результат.
+        /// Обрабатывает скручивание пробега: вызывает бизнес-логику и сообщает представлению результат.
         /// </summary>
+        /// <param name="id">Идентификатор машины.</param>
+        /// <param name="newMileage">Новое (уменьшенное) значение пробега.</param>
         private void OnRollBackMileageRequested(int id, int newMileage)
         {
             if (logic.RollBackMileage(id, newMileage))

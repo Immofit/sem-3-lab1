@@ -211,7 +211,10 @@ namespace ConsoleApp
             car.Color = ReadNonEmptyString("Введите цвет машины: ", "Цвет не может быть пустым.");
             car.Year = ReadInt("Введите год выпуска машины: ");
 
-            CreateRequested?.Invoke(car);
+            if (CreateRequested != null)
+            {
+                CreateRequested(car);
+            }
 
             Pause();
         }
@@ -223,7 +226,10 @@ namespace ConsoleApp
         {
             int id = ReadInt("Введите ID машины для удаления: ");
 
-            DeleteRequested?.Invoke(id);
+            if (DeleteRequested != null)
+            {
+                DeleteRequested(id);
+            }
 
             Pause();
         }
@@ -233,7 +239,10 @@ namespace ConsoleApp
         /// </summary>
         private void AllCars()
         {
-            RefreshRequested?.Invoke();
+            if (RefreshRequested != null)
+            {
+                RefreshRequested();
+            }
 
             Pause();
         }
@@ -252,7 +261,10 @@ namespace ConsoleApp
             car.Color = ReadNonEmptyString("Введите новый цвет машины: ", "Цвет не может быть пустым.");
             car.Year = ReadInt("Введите новый год выпуска машины: ");
 
-            UpdateRequested?.Invoke(car);
+            if (UpdateRequested != null)
+            {
+                UpdateRequested(car);
+            }
 
             Pause();
         }
@@ -262,7 +274,10 @@ namespace ConsoleApp
         /// </summary>
         private void GroupBrand()
         {
-            BrandGroupingRequested?.Invoke();
+            if (BrandGroupingRequested != null)
+            {
+                BrandGroupingRequested();
+            }
 
             Pause();
         }
@@ -272,10 +287,16 @@ namespace ConsoleApp
         /// </summary>
         private void CarsYear()
         {
-            RefreshRequested?.Invoke();
+            if (RefreshRequested != null)
+            {
+                RefreshRequested();
+            }
             int year = ReadInt("Введите год: ");
 
-            FindByYearRequested?.Invoke(year);
+            if (FindByYearRequested != null)
+            {
+                FindByYearRequested(year);
+            }
 
             Pause();
         }
@@ -287,7 +308,10 @@ namespace ConsoleApp
         {
             string color = ReadNonEmptyString("Введите цвет: ", "Цвет не может быть пустым.");
 
-            FindByColorRequested?.Invoke(color);
+            if (FindByColorRequested != null)
+            {
+                FindByColorRequested(color);
+            }
 
             Pause();
         }
@@ -331,10 +355,16 @@ namespace ConsoleApp
         /// </summary>
         private void AddTinting()
         {
-            RefreshRequested?.Invoke();
+            if (RefreshRequested != null)
+            {
+                RefreshRequested();
+            }
             int id = ReadInt("Введите ID машины : ");
 
-            AddTintingRequested?.Invoke(id);
+            if (AddTintingRequested != null)
+            {
+                AddTintingRequested(id);
+            }
 
             Pause();
         }
@@ -344,11 +374,17 @@ namespace ConsoleApp
         /// </summary>
         private void RollBackMileage()
         {
-            RefreshRequested?.Invoke();
+            if (RefreshRequested != null)
+            {
+                RefreshRequested();
+            }
             int id = ReadInt("Введите ID машины : ");
             int newMileage = ReadInt("Введите новый пробег: ");
 
-            RollBackMileageRequested?.Invoke(id, newMileage);
+            if (RollBackMileageRequested != null)
+            {
+                RollBackMileageRequested(id, newMileage);
+            }
 
             Pause();
         }

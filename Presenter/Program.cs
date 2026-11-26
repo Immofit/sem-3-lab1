@@ -1,12 +1,14 @@
 ﻿using ConsoleApp;
 using Presentation.WinForms;
+using Presentation.Wpf;
+using Presenter.ViewModels;
 
 namespace Presenter
 {
     /// <summary>
     /// Точка входа приложения: пользователь выбирает представление
-    /// (<see cref="ConsoleView"/> или <see cref="MainForm"/>), после чего
-    /// создаётся Presenter и запускается выбранный режим работы.
+    /// (<see cref="ConsoleView"/>, <see cref="MainForm"/> или WPF через MVVM),
+    /// после чего создаётся Presenter или ViewModelManager и запускается выбранный режим работы.
     /// </summary>
     class Program
     {
@@ -21,6 +23,7 @@ namespace Presenter
             Console.WriteLine("Выберите представление:");
             Console.WriteLine("  1 - Console");
             Console.WriteLine("  2 - WinForms");
+            Console.WriteLine("  3 - WPF (MVVM)");
             Console.Write("Ваш выбор: ");
 
             string? choice = Console.ReadLine()?.Trim();
@@ -34,12 +37,23 @@ namespace Presenter
                     break;
 
                 case "2":
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
+                    System.Windows.Forms.Application.EnableVisualStyles();
+                    System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 
                     MainForm form = new MainForm();
                     PresenterFactory.Create(form);
-                    Application.Run(form);
+                    System.Windows.Forms.Application.Run(form);
+                    break;
+
+                case "3":
+                    System.Windows.Application wpfApp = new System.Windows.Application();
+                    ViewManager viewManager = new ViewManager();
+                    ViewModelManager viewModelManager = ViewModelFactory.CreateManager(viewManager);
+                    wpfApp.Startup += (sender, eventArgs) =>
+                    {
+                        viewModelManager.ShowMain();
+                    };
+                    wpfApp.Run();
                     break;
 
                 default:

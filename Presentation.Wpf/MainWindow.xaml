@@ -1,0 +1,128 @@
+<local:BaseView x:Class="Presentation.Wpf.MainWindow"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:local="clr-namespace:Presentation.Wpf"
+                Title="Автосалон"
+                Height="500"
+                Width="880"
+                MinHeight="450"
+                MinWidth="760"
+                WindowStartupLocation="CenterScreen">
+    <local:BaseView.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </local:BaseView.Resources>
+
+    <Grid>
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Setter Property="Background" Value="#F5F5F5" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsSecretMode}" Value="True">
+                        <Setter Property="Background" Value="#191919" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Margin="14">
+            <TextBlock Text="Управление автосалоном"
+                       FontSize="15"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,12">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#222222" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSecretMode}" Value="True">
+                                <Setter Property="Foreground" Value="#EEEEEE" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <Button Content="Получить все машины"
+                    Command="{Binding RefreshCommand}"
+                    Height="30"
+                    Margin="0,0,0,8" />
+
+            <Button Content="Создать машину"
+                    Command="{Binding CreateCarCommand}"
+                    Height="30"
+                    Margin="0,0,0,8" />
+
+            <Button Content="Изменить машину"
+                    Command="{Binding UpdateCarCommand}"
+                    Height="30"
+                    Margin="0,0,0,8" />
+
+            <Button Content="Удалить машину"
+                    Command="{Binding DeleteCarCommand}"
+                    Height="30"
+                    Margin="0,0,0,14" />
+
+            <Button Content="Группировать по бренду"
+                    Command="{Binding GroupByBrandCommand}"
+                    Height="30"
+                    Margin="0,0,0,8" />
+
+            <Button Content="Показать машины по году"
+                    Command="{Binding FindByYearCommand}"
+                    Height="30"
+                    Margin="0,0,0,8" />
+
+            <Button Content="Показать машины по цвету"
+                    Command="{Binding FindByColorCommand}"
+                    Height="30"
+                    Margin="0,0,0,20" />
+
+            <Button Content="{Binding SecretButtonText}"
+                    Command="{Binding ToggleSecretModeCommand}"
+                    Height="30"
+                    Margin="0,0,0,10" />
+
+            <StackPanel Visibility="{Binding IsSecretMode, Converter={StaticResource BoolToVis}}">
+                <TextBlock Text="Секретный режим активирован"
+                           Foreground="#FFCC00"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,8" />
+
+                <Button Content="Скрутить пробег"
+                        Command="{Binding RollBackMileageCommand}"
+                        Height="30"
+                        Margin="0,0,0,8" />
+
+                <Button Content="Поставить тонировку"
+                        Command="{Binding AddTintingCommand}"
+                        Height="30" />
+            </StackPanel>
+        </StackPanel>
+
+        <DataGrid Grid.Column="1"
+                  Margin="0,14,14,14"
+                  ItemsSource="{Binding Cars}"
+                  SelectedItem="{Binding SelectedCar, Mode=TwoWay}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="45" />
+                <DataGridTextColumn Header="Бренд" Binding="{Binding Brand}" Width="*" />
+                <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="*" />
+                <DataGridTextColumn Header="Цвет" Binding="{Binding Color}" Width="90" />
+                <DataGridTextColumn Header="Год" Binding="{Binding Year}" Width="65" />
+                <DataGridTextColumn Header="Пробег" Binding="{Binding Mileage}" Width="85" />
+                <DataGridCheckBoxColumn Header="Тонировка" Binding="{Binding WindowTinting}" Width="85" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</local:BaseView>

@@ -17,9 +17,14 @@ namespace Presentation.Wpf
         private bool isDialog;
 
         /// <summary>
-        /// Возникает после закрытия окна.
+        /// ViewModel, привязанная к данному окну.
         /// </summary>
-        public event Action? ViewClosed;
+        public IViewModel? BoundViewModel { get; private set; }
+
+        /// <summary>
+        /// Возникает после закрытия окна. Передаёт ссылку на закрытое окно.
+        /// </summary>
+        public event Action<BaseView>? ViewClosed;
 
         /// <summary>
         /// Привязывает переданную ViewModel к окну через свойство DataContext.
@@ -27,6 +32,7 @@ namespace Presentation.Wpf
         /// <param name="viewModel">Экземпляр ViewModel для данного окна.</param>
         public void BindViewModel(IViewModel viewModel)
         {
+            BoundViewModel = viewModel;
             DataContext = viewModel;
         }
 
@@ -76,7 +82,7 @@ namespace Presentation.Wpf
             base.OnClosed(e);
             if (ViewClosed != null)
             {
-                ViewClosed();
+                ViewClosed(this);
             }
         }
     }

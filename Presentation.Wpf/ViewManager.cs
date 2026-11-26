@@ -32,16 +32,25 @@ namespace Presentation.Wpf
 
             mainView = view;
             openViews[viewModel] = view;
-            view.ViewClosed += () =>
-            {
-                openViews.Remove(viewModel);
-                if (mainView == view)
-                {
-                    mainView = null;
-                }
-            };
+            view.ViewClosed += OnMainViewClosed;
 
             view.ShowView();
+        }
+
+        /// <summary>
+        /// Удаляет закрытое главное окно из словаря открытых представлений.
+        /// </summary>
+        /// <param name="view">Закрытое главное окно.</param>
+        private void OnMainViewClosed(BaseView view)
+        {
+            if (view.BoundViewModel != null)
+            {
+                openViews.Remove(view.BoundViewModel);
+            }
+            if (mainView == view)
+            {
+                mainView = null;
+            }
         }
 
         /// <summary>

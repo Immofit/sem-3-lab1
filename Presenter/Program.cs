@@ -49,10 +49,7 @@ namespace Presenter
                     System.Windows.Application wpfApp = new System.Windows.Application();
                     ViewManager viewManager = new ViewManager();
                     ViewModelManager viewModelManager = ViewModelFactory.CreateManager(viewManager);
-                    wpfApp.Startup += (sender, eventArgs) =>
-                    {
-                        viewModelManager.ShowMain();
-                    };
+                    viewModelManager.ShowMain();
                     wpfApp.Run();
                     break;
 
